@@ -1,0 +1,219 @@
+﻿@using Microsoft.Extensions.Configuration
+@inject IConfiguration Config
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@Config.GetSection("Sistema").Value</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png">
+    <link href="/admin/fonts/fonts.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    <link href="/admin/libs/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet" />
+    <link href="/admin/libs/select2/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="/admin/libs/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css" rel="stylesheet" />
+    <link href="/admin/libs/magnific-popup/dist/magnific-popup.css" rel="stylesheet" />
+    <link href="/admin/css/pages/floating-label.css" rel="stylesheet">
+    <link href="/admin/css/pages/tab-page.css" rel="stylesheet" />
+    <link href="/admin/Chat.css" rel="stylesheet" />
+    <link href="/admin/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/admin/libs/perfect-scrollbar/dist/css/perfect-scrollbar.min.css" rel="stylesheet">
+    <link href="/admin/libs/c3-master/c3.min.css" rel="stylesheet">
+    <link href="/admin/libs/toast-master/css/jquery.toast.css" rel="stylesheet">
+    <link href="/admin/css/style.css" rel="stylesheet">
+    <link href="/admin/css/pages/dashboard1.css" rel="stylesheet">
+    <link href="/admin/css/colors/blue.css" id="theme" rel="stylesheet">
+    <link href="/admin/admin.css" rel="stylesheet">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    @RenderSection("styles", false)
+</head>
+<body class="fix-header fix-sidebar card-no-border">
+    <div class="preloader">
+        <div class="loader">
+            <div class="loader__figure"></div>
+            <p class="loader__label text-center">Carregando,<br />Aguarde por gentileza...</p>
+        </div>
+    </div>
+    <div id="main-wrapper">
+        <header class="topbar">
+            <nav class="navbar top-navbar navbar-expand-md navbar-light">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="@Url.Action("DashBoard", "Home")">
+                        <b>
+                            <img src="/favicon.png" alt="homepage" class="light-logo mobile">
+                        </b>
+                        <span>
+                            <img src="/images/logo.png" alt="homepage" class="light-logo">
+                        </span>
+                    </a>
+                </div>
+                <div class="navbar-collapse">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item"> <a class="nav-link nav-toggler hidden-md-up waves-effect waves-dark" href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
+                        <li class="nav-item"> <a class="nav-link sidebartoggler hidden-sm-down waves-effect waves-dark" href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
+                    </ul>
+                    @await Component.InvokeAsync("Perfil")
+                </div>
+            </nav>
+        </header>
+        @await Component.InvokeAsync("Menu")
+        <div class="page-wrapper">
+            <div class="container-fluid">
+                @RenderBody()
+            </div>
+            @await Html.PartialAsync("_Footer")
+        </div>
+    </div>
+    <div class="modal" id="modalAdm" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content animated fadeIn">
+                <div class="modal-header">
+                    <h4 class="modal-title"></h4>
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">x</span></button>
+                </div>
+                <div class="modal-body">
+                    <iframe width="99.6%" src="/carregando.html" frameborder="0" height="100%"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="modalPaiAdm" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content animated fadeIn">
+                <div class="modal-header">
+                    <h4 class="modal-title"></h4>
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">x</span></button>
+                </div>
+                <div class="modal-body">
+                    <iframe width="99.6%" src="/carregando.html" frameborder="0" height="100%"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="modalPaiPaiAdm" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content animated fadeIn">
+                <div class="modal-header">
+                    <h4 class="modal-title"></h4>
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">x</span></button>
+                </div>
+                <div class="modal-body">
+                    <iframe width="99.6%" src="/carregando.html" frameborder="0" height="100%"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="modalConfirm" class="modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content animated fadeIn">
+                <div class="modal-header">
+                    <h5 class="modal-title">Atenção!</h5>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn btn-primary" id="btnConfirme"></button>
+                    <button type="button" data-dismiss="modal" class="btn" id="btnCancelar"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="modalPaiConfirm" class="modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content animated fadeIn">
+                <div class="modal-header">
+                    <h5 class="modal-title">Atenção!</h5>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn btn-primary" id="btnPaiConfirme"></button>
+                    <button type="button" data-dismiss="modal" class="btn" id="btnPaiCancelar"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="modalPaiPaiConfirm" class="modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content animated fadeIn">
+                <div class="modal-header">
+                    <h5 class="modal-title">Atenção!</h5>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn btn-primary" id="btnPaiPaiConfirme"></button>
+                    <button type="button" data-dismiss="modal" class="btn" id="btnPaiPaiCancelar"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input id="hdId" type="hidden" />
+    <input id="hdUserName" type="hidden" />
+    <input id="hdTitle" type="hidden" value="@Config.GetSection("Sistema").Value" />
+    <div id="boxChat"></div>
+
+    <script src="/admin/libs/jquery/jquery.min.js"></script>
+    <script src="/admin/libs/bootstrap/js/popper.min.js"></script>
+    <script src="/admin/libs/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/admin/js/perfect-scrollbar.jquery.min.js"></script>
+    <script src="/admin/js/waves.js"></script>
+    <script src="/admin/js/sidebarmenu.js"></script>
+    <script src="/admin/js/custom.min.js"></script>
+    <script src="/admin/libs/sparkline/jquery.sparkline.min.js"></script>
+    <script src="/admin/libs/d3/d3.min.js"></script>
+    <script src="/admin/libs/c3-master/c3.min.js"></script>
+    <script src="/admin/libs/styleswitcher/jQuery.style.switcher.js"></script>
+    <script src="/admin/libs/sweetalert2/dist/sweetalert2.all.min.js"></script>
+    <script src="/admin/libs/sweetalert2/sweet-alert.init.js"></script>
+
+    <script src="/admin/libs/moment/moment.js"></script>
+    <script src="/admin/libs/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
+    <script src="/admin/libs/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
+    <script src="/admin/libs/typeahead.js-master/dist/typeahead.jquery.min.js"></script>
+    <script src="/admin/libs/select2/dist/js/select2.full.min.js"></script>
+    <script src="/admin/libs/jquery-sparkline/jquery.sparkline.min.js"></script>
+    <script src="/admin/validation.js"></script>
+    <script src="/admin/mascara.js"></script>
+    <script src="/admin/maskfunction.js"></script>
+
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+    <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
+    <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js"></script>
+    <script src="/admin/Geral.js"></script>
+    @RenderSection("scripts", false)
+    <script>
+        $(function () {
+            window.onhashchange = function() {
+                    console.log("voltar");
+                    console.log($('#modalAdm').is(':visible'));
+                    if ($('#modalAdm').is(':visible')) {
+                        $('#modalAdm').modal('toggle');// Your code here
+                    }
+                    if ($('#modalPaiAdm').is(':visible')) {
+                        $('#modalPaiAdm').modal('toggle');// Your code here
+                    }
+                    if ($('#modalPaiPaiAdm').is(':visible')) {
+                        $('#modalPaiPaiAdm').modal('toggle');// Your code here
+                    }
+            }
+        });
+    </script>
+</body>
+
+</html>

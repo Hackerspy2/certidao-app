@@ -1,0 +1,33 @@
+﻿@using System.Configuration
+@using Domain
+@using WebApp.Models
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:og="http://ogp.me/ns#"
+      xmlns:fb="http://www.facebook.com/2008/fbml">
+<head>
+    <title>@ViewBag.Title</title>
+    <meta name="robots" content="index, follow" />
+    <meta name="keywords" content="@ViewBag.KeyWords" />
+    <meta name="description" content="@ViewBag.Description" />
+    <meta name="author" content="www.idevweb.com.br" />
+    <meta name="robots" content="all" />
+    <meta name="rating" content="General" />
+    <meta name="language" content="pt-br" />
+    <link href="/admin/libs/bootstrap/css/bootstrap.css" rel="stylesheet" />
+    <link href="/admin/fonts/fonts.css" rel="stylesheet" />
+    @RenderSection("styles", false)
+
+</head>
+<body>
+    <div class="container">
+        @RenderBody()
+    </div>
+    @RenderSection("scripts", false)
+    <script type="text/javascript">
+
+
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+﻿@model Domain.Pessoa
+@using HtmlHelper = WebApp.Models.HtmlHelper
+@Html.Raw(HtmlHelper.MontaDiv("6", "Cadastro", $"{Model.DataCadastro} - {Model.UsuarioCadastro}"))
+@Html.Raw(HtmlHelper.MontaDiv("6", "Última alteração", $"{Model.DataAlteracao} - {Model.UsuarioAlteracao}"))
+@Html.Raw(HtmlHelper.MontaDiv("3", "Nome", Model.Nome))
+@Html.Raw(HtmlHelper.MontaDiv("2", "Cpf/Cnpj", Model.Cpf))
+@Html.Raw(HtmlHelper.MontaDiv("2", "RG", Model.Rg))
+@Html.Raw(HtmlHelper.MontaDiv("2", "Orgão emisso", Model.RgEmissor))
+@Html.Raw(HtmlHelper.MontaDiv("3", "Nascimento", $"{Model.DataNascimento:d}"))
+@Html.Raw(HtmlHelper.MontaDiv("5", "Email", Model.Email))
+@Html.Raw(HtmlHelper.MontaDiv("2", "Telefone", Model.Telefone))
+@Html.Raw(HtmlHelper.MontaDiv("2", "Celular", Model.Celular))
+@Html.Raw(HtmlHelper.MontaDiv("2", "Cep", Model.Cep))
+@Html.Raw(HtmlHelper.MontaDiv("4", "Logradouro", Model.Logradouro))
+@Html.Raw(HtmlHelper.MontaDiv("2", "Numero", Model.Numero))
+@Html.Raw(HtmlHelper.MontaDiv("2", "Complemento", Model.Complemento))
+@Html.Raw(HtmlHelper.MontaDiv("2", "Bairro", Model.Bairro))
+@Html.Raw(HtmlHelper.MontaDiv("1", "Estado", Model.Estado))
+@Html.Raw(HtmlHelper.MontaDiv("3", "Cidade", Model.Cidade))
+@Html.Raw(HtmlHelper.MontaDiv("1", "Status", Model.Status))
+@Html.Raw(HtmlHelper.MontaDiv("2", "Perfil", Model.IsSuporte ? "Administrador" : Model.Perfil))
+@Html.Raw(HtmlHelper.MontaDiv("12", "Observações", Model.Observacao))
+
+@* <div class="col-lg-3 col-sm-3 col-md-3 col-12">
+        <img src="/images/pessoa/@(string.IsNullOrWhiteSpace(Model.Foto) ? "semfoto.jpg" : Model.Foto)" class="img-circle img-responsive" style="width: 170px" />
+    </div> *@

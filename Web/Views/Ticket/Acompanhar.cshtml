@@ -1,0 +1,236 @@
+﻿@model Tuple<Domain.Pagador, IList<Domain.Pedido>, IList<Domain.Ticket>, IList<Domain.Interacao>>
+@inject IConfiguration Config
+@{
+    ViewBag.Titulo = $"Emitir certidão - {ViewBag.tipo}";
+    Layout = "~/Views/Shared/_Site.cshtml";
+}
+@section scripts
+{
+    <script src="~/v2/js/validacao.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(".preloader").hide();
+            $("#salvar").click(function () {
+                if ($("#nome").val() == "") {
+                    Notifica("Atenção", "Informe seu nome", "warning");
+                    return;
+                }
+
+                if ($("#cpf").val() == "") {
+                    Notifica("Atenção", "Informe seu CPF", "warning");
+                    return;
+                }
+                
+                if ($("#email").val() == "") {
+                    Notifica("Atenção", "Informe seu e-mail", "warning");
+                    return;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Ticket/UpdatePerfil",
+                    data: {
+                        nome: $("#nome").val(),
+                        cpf: $("#cpf").val(),
+                        email: $("#email").val(),
+                        senhaAtual: $("#senhaAtual").val(),
+                        novaSenha: $("#novaSenha").val(),
+                        confirmarSenha: $("#confirmarSenha").val()
+                    },
+                    success: function (ret) {
+                        Notifica(ret.cssClass == "error" ? "Atenção" : "Sucesso", ret.mensagem, ret.cssClass);
+                    }
+                });
+            });
+        });
+    </script>
+}
+<div class="linha-topo">
+    <h2 class="text-center">Encontre a certidão que precisa, de um jeito fácil e sem filas.</h2>
+</div>
+<div id="topo">
+    <div class="container">
+        <div class="row">
+            <div class="col-6">
+                <a href="/">
+                    <img src="~/v2/images/logo-topo.svg" class="logo" />
+                </a>
+            </div>
+            <div class="col-6 text-right">
+                <a asp-action="Acompanhar" class="btn btn-primary" style="float: right; margin-top: 34px;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 4a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7ZM6.5 7.5a5.5 5.5 0 1 1 11 0 5.5 5.5 0 0 1-11 0Zm2.826 7h5.348c1.227 0 2.065 0 2.777.215a5 5 0 0 1 3.334 3.334c.216.712.215 1.55.215 2.777V21a1 1 0 0 1-2 0c0-1.468-.01-1.98-.13-2.37a3 3 0 0 0-2-2c-.39-.12-.902-.13-2.37-.13h-5c-1.468 0-1.98.01-2.37.13a3 3 0 0 0-2 2c-.12.39-.13.902-.13 2.37a1 1 0 1 1-2 0v-.174c0-1.227 0-2.065.215-2.777a5 5 0 0 1 3.334-3.334c.712-.216 1.55-.216 2.777-.215Z" clip-rule="evenodd"></path></svg> Acompanhar Emissão</a>
+                <nav class="navbar navbar-expand-lg bg-body-tertiary">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item"><a class="nav-link" aria-current="page" href="/"> Emitir Certidão </a></li>
+                            <li class="nav-item"><a class="nav-link ancora" href="#sobre"> Sobre Nós </a></li>
+                            <li class="nav-item"><a class="nav-link" asp-action="FaleConosco"> Contato </a></li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="painel">
+        <p>&nbsp;</p>
+        <h1 style="display: flex; justify-content: space-between">
+            Olá @User.Identity.Name! 👋
+            <div class="botoes">
+                <a href="#pedidos" class="ancora">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18ZM1 12C1 5.925 5.925 1 12 1s11 4.925 11 11-4.925 11-11 11S1 18.075 1 12Zm11-7.5a1 1 0 0 1 1 1V6h.167A3.333 3.333 0 0 1 16.5 9.333a1 1 0 1 1-2 0C14.5 8.597 13.903 8 13.167 8H11a1.5 1.5 0 0 0 0 3h2a3.5 3.5 0 1 1 0 7v.5a1 1 0 1 1-2 0V18h-.167A3.333 3.333 0 0 1 7.5 14.667a1 1 0 1 1 2 0c0 .736.597 1.333 1.333 1.333H13a1.5 1.5 0 0 0 0-3h-2a3.5 3.5 0 1 1 0-7v-.5a1 1 0 0 1 1-1Z" clip-rule="evenodd"></path></svg>
+                    <span>Pedidos</span>
+                </a>
+                <a href="#certidoes" class="ancora">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M8.759 1h6.482c.805 0 1.47 0 2.01.044.563.046 1.08.145 1.565.392a4 4 0 0 1 1.748 1.748c.247.485.346 1.002.392 1.564C21 5.29 21 5.954 21 6.758V12.5a1 1 0 1 1-2 0V6.8c0-.857 0-1.439-.038-1.889-.035-.438-.1-.663-.18-.819a2 2 0 0 0-.874-.874c-.156-.08-.38-.145-.819-.18C16.639 3 16.057 3 15.2 3H8.8c-.857 0-1.439 0-1.889.038-.438.035-.663.1-.819.18a2 2 0 0 0-.874.874c-.08.156-.145.38-.18.819C5 5.361 5 5.943 5 6.8v10.4c0 .857 0 1.439.038 1.889.035.438.1.663.18.819a2 2 0 0 0 .874.874c.156.08.38.145.819.18C7.361 21 7.943 21 8.8 21h3.7a1 1 0 1 1 0 2H8.759c-.805 0-1.47 0-2.01-.044-.563-.046-1.08-.145-1.565-.392a4 4 0 0 1-1.748-1.748c-.247-.485-.346-1.002-.392-1.564C3 18.71 3 18.046 3 17.242V6.758c0-.805 0-1.47.044-2.01.046-.563.145-1.08.392-1.565a4 4 0 0 1 1.748-1.748c.485-.247 1.002-.346 1.564-.392C7.29 1 7.954 1 8.758 1ZM7 7a1 1 0 0 1 1-1h8a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Zm0 4a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Zm0 4a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Zm11 0a1 1 0 0 1 1 1v3.586l1.293-1.293a1 1 0 0 1 1.414 1.414l-3 3a1 1 0 0 1-1.414 0l-3-3a1 1 0 0 1 1.414-1.414L17 19.586V16a1 1 0 0 1 1-1Z" clip-rule="evenodd"></path></svg>
+                    <span>Certidões</span>
+                </a>
+                <a href="#conta" class="ancora">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M10 4a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7ZM4.5 7.5a5.5 5.5 0 1 1 11 0 5.5 5.5 0 0 1-11 0Zm13.543 2.543a2.768 2.768 0 1 1 3.914 3.914L15.5 20.414l-.022.023a2.752 2.752 0 0 1-.318.285 1.99 1.99 0 0 1-.35.205 2.71 2.71 0 0 1-.403.14l-.031.008-3.101.887a1 1 0 0 1-1.237-1.237l.886-3.101.01-.03a2.64 2.64 0 0 1 .139-.405 1.97 1.97 0 0 1 .205-.349c.092-.125.2-.232.285-.318l.023-.022 6.457-6.457Zm2.5 1.414c-.3-.3-.786-.3-1.086 0L13 17.914a5.977 5.977 0 0 0-.107.109l-.002.001v.002c-.01.029-.02.068-.043.147l-.392 1.371 1.37-.392c.08-.022.12-.034.148-.043h.002l.001-.002c.022-.02.05-.049.109-.107l6.457-6.457c.3-.3.3-.786 0-1.086ZM7.326 14.5H9a1 1 0 1 1 0 2H7.5c-1.468 0-1.98.01-2.37.13a3 3 0 0 0-2 2c-.12.39-.13.902-.13 2.37a1 1 0 1 1-2 0v-.174c0-1.227 0-2.065.215-2.777a5 5 0 0 1 3.334-3.334c.712-.216 1.55-.216 2.777-.215Z" clip-rule="evenodd"></path></svg>
+                    <span>Conta</span>
+                </a>
+            </div>
+        </h1>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+    </div>
+</div>
+<div class="container">
+    <div class="area" id="pedidos">
+        <h1>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18ZM1 12C1 5.925 5.925 1 12 1s11 4.925 11 11-4.925 11-11 11S1 18.075 1 12Zm11-7.5a1 1 0 0 1 1 1V6h.167A3.333 3.333 0 0 1 16.5 9.333a1 1 0 1 1-2 0C14.5 8.597 13.903 8 13.167 8H11a1.5 1.5 0 0 0 0 3h2a3.5 3.5 0 1 1 0 7v.5a1 1 0 1 1-2 0V18h-.167A3.333 3.333 0 0 1 7.5 14.667a1 1 0 1 1 2 0c0 .736.597 1.333 1.333 1.333H13a1.5 1.5 0 0 0 0-3h-2a3.5 3.5 0 1 1 0-7v-.5a1 1 0 0 1 1-1Z" clip-rule="evenodd"></path></svg>
+            Pedidos
+        </h1>
+        <p>&nbsp;</p>
+        <table class="table table-bordered">
+            <tr>
+                <th>Pedido</th>
+                <th>Data</th>
+                <th>Status</th>
+                <th>Total</th>
+            </tr>
+            @if (Model.Item2.Any())
+            {
+                foreach (var item in Model.Item2)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@($"{item.Data:dd} de {item.Data:MMMM} de {item.Data:yyyy}")</td>
+                        <td>@item.StatusPagamento</td>
+                        <td>@($"R$ {item.Valor} de {Model.Item3.Count(a => a.IdPedido == item.Id)}")</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4">Nenhum pedido até o momento</td>
+                </tr>
+            }
+        </table>
+        <p>&nbsp;</p>
+    </div>
+</div>
+<div class="container">
+    <div class="area" id="certidoes">
+        <h1>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18ZM1 12C1 5.925 5.925 1 12 1s11 4.925 11 11-4.925 11-11 11S1 18.075 1 12Zm11-7.5a1 1 0 0 1 1 1V6h.167A3.333 3.333 0 0 1 16.5 9.333a1 1 0 1 1-2 0C14.5 8.597 13.903 8 13.167 8H11a1.5 1.5 0 0 0 0 3h2a3.5 3.5 0 1 1 0 7v.5a1 1 0 1 1-2 0V18h-.167A3.333 3.333 0 0 1 7.5 14.667a1 1 0 1 1 2 0c0 .736.597 1.333 1.333 1.333H13a1.5 1.5 0 0 0 0-3h-2a3.5 3.5 0 1 1 0-7v-.5a1 1 0 0 1 1-1Z" clip-rule="evenodd"></path></svg>
+            Certidões
+        </h1>
+        <p>&nbsp;</p>
+        <table class="table table-bordered">
+            <tr>
+                <th>Certidão</th>
+            </tr>
+            @if (Model.Item4.Any())
+            {
+                foreach (var item in Model.Item4)
+                {
+                    var solicitacao = Model.Item3.FirstOrDefault(a => a.Id == item.IdTicket);
+                    var url = $"{Config.GetSection("UrlSistema").Value}/temp/{item.Anexo}";
+                    <tr>
+                        <td><a href="@url" target="_blank">@solicitacao.Tipo @solicitacao.SubTipo</a></td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4">Nenhuma certidão até o momento</td>
+                </tr>
+            }
+        </table>
+        <p>&nbsp;</p>
+    </div>
+</div>
+<div class="container">
+    <div class="area" id="conta">
+        <h1>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M10 4a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7ZM4.5 7.5a5.5 5.5 0 1 1 11 0 5.5 5.5 0 0 1-11 0Zm13.543 2.543a2.768 2.768 0 1 1 3.914 3.914L15.5 20.414l-.022.023a2.752 2.752 0 0 1-.318.285 1.99 1.99 0 0 1-.35.205 2.71 2.71 0 0 1-.403.14l-.031.008-3.101.887a1 1 0 0 1-1.237-1.237l.886-3.101.01-.03a2.64 2.64 0 0 1 .139-.405 1.97 1.97 0 0 1 .205-.349c.092-.125.2-.232.285-.318l.023-.022 6.457-6.457Zm2.5 1.414c-.3-.3-.786-.3-1.086 0L13 17.914a5.977 5.977 0 0 0-.107.109l-.002.001v.002c-.01.029-.02.068-.043.147l-.392 1.371 1.37-.392c.08-.022.12-.034.148-.043h.002l.001-.002c.022-.02.05-.049.109-.107l6.457-6.457c.3-.3.3-.786 0-1.086ZM7.326 14.5H9a1 1 0 1 1 0 2H7.5c-1.468 0-1.98.01-2.37.13a3 3 0 0 0-2 2c-.12.39-.13.902-.13 2.37a1 1 0 1 1-2 0v-.174c0-1.227 0-2.065.215-2.777a5 5 0 0 1 3.334-3.334c.712-.216 1.55-.216 2.777-.215Z" clip-rule="evenodd"></path></svg>
+            Minha Conta
+            <a asp-action="LogOff" style="float: right; text-decoration: none; font-size: 14pt; margin-right: 10px;">Sair</a>
+        </h1>
+        <p>&nbsp;</p>
+        <div class="row">
+            <div class="col-md-6 col-12 mb-3">
+                <label>Nome *</label>
+                <input type="text" class="form-control" id="nome" value="@Model.Item1.Nome" />
+            </div>
+            <div class="col-md-6 col-12 mb-3">
+                <label>CPF *</label>
+                <input type="text" class="form-control mask_cpf" id="cpf" value="@Model.Item1.Cpf" />
+            </div>
+            <div class="col-12 mb-3">
+                <label>E-mail *</label>
+                <input type="email" class="form-control" id="email" value="@Model.Item1.Email" />
+            </div>
+        </div>
+        <h4>Alteração de senha</h4>
+        <div class="row">
+            <div class="col-12 mb-3">
+                <label>Senha atual (deixe em branco para não alterar) *</label>
+                <input type="password" class="form-control" id="senhaAtual" />
+            </div>
+            <div class="col-12 mb-3">
+                <label>Nova senha (deixe em branco para não alterar) *</label>
+                <input type="password" class="form-control" id="novaSenha" />
+            </div>
+            <div class="col-12 mb-3">
+                <label>Confirmar nova senha *</label>
+                <input type="password" class="form-control" id="confirmarSenha" />
+            </div>
+        </div>
+        <button id="salvar" class="btn btn-primary">Salvar altrações</button>
+        <p>&nbsp;</p>
+    </div>
+</div>
+<div id="footer">
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <div class="container">
+        <div class="logoRodape">
+            <div><img src="/v2/images/logo-rodape.svg" style="width: 200px;" /></div>
+            <div class="text-center">
+                <a href="/Politica-de-Privacidade.pdf" target="_blank">Política de Privacidade</a><br />
+                <a href="/Termos-de-Uso.pdf" target="_blank">Termos de Uso</a>
+            </div>
+            <div class="text-right">
+                <img src="~/v2/images/compra-segura-optimized.png" /> &nbsp; <img src="~/v2/images/satisfacao-optimized.png" /> &nbsp; <img src="~/v2/images/site-seguro-optimized.png" />
+            </div>
+        </div>
+    </div>
+    <p>&nbsp;</p>
+    <div class="root">
+        <div class="container">
+            <div class="row">
+                <div class=" col-12">
+                    Copyright © @DateTime.Today.Year Certidão Negativa Br CNPJ 54.673.333/0001-00 | Todos os direitos Reservados
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

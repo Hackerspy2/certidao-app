@@ -1,0 +1,110 @@
+﻿@using System.Configuration
+@{
+    Layout = "~/Views/Shared/_LayoutOff.cshtml";
+}
+@section scripts
+{
+    <script type="text/javascript">
+        $(function () {
+            $('.showSenha').on("click", function () {
+                if ($(this).attr("data-tipo") == "show") {
+                    $(this).parent().find("input").prop("type", "text");
+                    $(this).attr("data-tipo", "hide");
+                    $(this).removeClass("mdi-eye-off").addClass("mdi-eye");
+                } else {
+                    $(this).parent().find("input").prop("type", "password");
+                    $(this).attr("data-tipo", "show");
+                    $(this).removeClass("mdi-eye").addClass("mdi-eye-off");
+                }
+            });
+            $('#to-recover').on("click", function () {
+                $("#loginform").slideUp();
+                $("#recoverform").fadeIn();
+            });
+            $('#to-login').on("click", function () {
+                showLogin();
+            });
+        });
+    </script>
+}
+<div class="login-register" style="background-color: #5c5b57;">
+    <div class="login-box card">
+        <div class="card-body radius">
+            <form asp-action="Validar" method="post" enctype="multipart/form-data" role="form" class="floating-labels formAsync" id="loginform" novalidate="">
+                <div style="display: flex; justify-content: center; margin: 15px 0;">
+                <img src="~/images/logo.png" style="width: 157px;"/>
+                </div>
+                <h3 class="box-title m-b-20">Entrar</h3>
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <input type="email" name="email" id="email" class="form-control" />
+                        <span class="bar"></span>
+                        <label for="email">E-mail de acesso*</label>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <i class="mdi mdi-eye-off showSenha" data-tipo="show" style="right: 0;font-size: 15pt;margin-top: 8px;position: absolute;margin-right: 12px;cursor: pointer"></i>
+                        <input type="password" name="senha" id="senha" class="form-control" />
+                        <span class="bar"></span>
+                        <label for="senha">Senha de acesso*</label>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-12">
+                        <div class="checkbox checkbox-info float-left p-t-0">
+                            <input id="RememberMe" name="RememberMe" type="checkbox" class="filled-in chk-col-light-blue">
+                            <label for="RememberMe"> Salvar informação? </label>
+                        </div> <a href="javascript:void(0)" id="to-recover" class="text-muted float-right"><i class="fa fa-lock m-r-5"></i> Recuperar senha</a>
+                    </div>
+                </div>
+                <div class="form-group text-center">
+                    <div class="col-xs-12 p-b-20">
+                        <button class="btn btn-block btn-lg btn-info btn-rounded" type="submit">Logar</button>
+                    </div>
+                </div>
+                @*<div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 m-t-10 text-center">
+                        <div class="social">
+                            <a href="javascript:void(0)" class="btn  btn-facebook" data-toggle="tooltip" title="Login with Facebook"> <i aria-hidden="true" class="fab fa-facebook-f"></i> </a>
+                            <a href="javascript:void(0)" class="btn btn-googleplus" data-toggle="tooltip" title="Login with Google"> <i aria-hidden="true" class="fab fa-google-plus-g"></i> </a>
+                        </div>
+                    </div>
+                </div>
+                    <div class="form-group m-b-0">
+                        <div class="col-sm-12 text-center">
+                            Não tem uma conta? <a href="@Url.Action()" class="text-info m-l-5"><b>Cadastre-se</b></a>
+                        </div>
+                    </div>*@
+                <input type="hidden" name="returnUrl" id="returnUrl" value="@ViewBag.returnUrl"/>
+            </form>
+            <form asp-action="RecuperarSenha" method="post" enctype="multipart/form-data" role="form" class="floating-labels formAsync" id="recoverform" novalidate="">
+                    <h3 class="box-title m-b-20">Recuperar senha</h3>
+                    <div class="form-group ">
+                        <div class="col-xs-12">
+                            <p class="text-muted">Digite seu endereço de e-mail e sua senha será enviada para seu e-mail. </p>
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <div class="col-xs-12">
+                            <input type="email" class="form-control" name="emailReq" id="emailReq" />
+                            <span class="bar"></span>
+                            <label for="emailReq">E-mail de acesso*</label>
+                            <p class="help-block"></p>
+                        </div>
+                    </div>
+                    <div class="form-group text-center m-t-20">
+                        <div class="col-xs-12">
+                            <button class="btn btn-primary btn-lg btn-block text-uppercase waves-effect waves-light" type="submit">Recuperar</button>
+                        </div>
+                        <div class="col-xs-12">
+                            <br />
+                            <a href="javascript:void(0)" id="to-login" class="text-muted"> Voltar</a>
+                        </div>
+                    </div>
+              </form>
+        </div>
+    </div>
+</div>

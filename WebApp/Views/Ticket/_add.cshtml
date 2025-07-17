@@ -1,0 +1,97 @@
+﻿@using Repository.Util
+@using Domain
+@model Ticket
+@using HtmlHelper = WebApp.Models.HtmlHelper
+@{
+    var admin = Base.GetDadosUsuario<bool>(User, "IsSuporte");
+}
+<div class="col-12">
+    <div class="card">
+        <div class="card-header" style="font-weight: bold">Dados pessoais</div>
+        <div class="card-body">
+            <div class="row mt-2">
+                @Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "Cpf", Model.Cpf, "CPF", "*", coluns: "2", classe: "mask_cpf"))
+                @Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "Nome", Model.Nome, "Nome completo", "*", "4"))
+                @Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "NomeMae", Model.NomeMae, "Nome da mãe", "", "3"))
+                @Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "NomePai", Model.NomePai, "Nome do pai", "", "3", ""))
+                @Html.Raw(HtmlHelper.MontaInput(InputTypes.Select, "Nacionalidade", Model.Nacionalidade, "Nacionalidade", "", "2", "ListNacionalidade"))
+                @Html.Raw(HtmlHelper.MontaInput(InputTypes.Select, "EstadoNasceu", Model.EstadoNasceu, "Estado onde nasceu", "", "2"))
+                @Html.Raw(HtmlHelper.MontaInput(InputTypes.Select, "CidadeNasceu", Model.CidadeNasceu, "Cidade onde nasceu", "", "3"))
+                @Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "Celular", Model.Celular, "Celular (what'sapp)", "*", "2", "", "mask_celular"))
+                @Html.Raw(HtmlHelper.MontaInput(InputTypes.Email, "Email", Model.Email, "E-mail", "", "3"))
+                @Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "DataNascimento", Model.DataNascimento, "Data nascimento", "*", "2", classe: "mask_data"))
+                @if (admin)
+                {
+                    @Html.Raw(HtmlHelper.MontaInput(InputTypes.Select, "IdPessoa", Model.IdPessoa, "Operador", "", "3"))
+                    @Html.Raw(HtmlHelper.MontaInput(InputTypes.Select, "Status", Model.Status, "Status", "", "2", "ListStatusTicket"))
+                }
+                else
+                {
+                    @Html.HiddenFor(a => a.IdPessoa)
+                    @Html.HiddenFor(a => a.Status)
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-12">
+    <div class="card">
+        <div class="card-header" style="font-weight: bold">Documento</div>
+        <div class="card-body">
+            <div class="row mt-2">
+                @Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "Rg", Model.Rg, "Nº do documento", "", "2"))
+                @Html.Raw(HtmlHelper.MontaInput(InputTypes.Select, "Emissor", Model.Emissor, "Órgão emissor", "", "2", "ListEmissor"))
+                @Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "EmissorOutro", Model.EmissorOutro, "Digite aqui o órgão emissor", "", "2"))
+                @Html.Raw(HtmlHelper.MontaInput(InputTypes.Select, "EmissorEstado", Model.EmissorEstado, "Estado emissor", "", "2"))
+                @Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "Passaporte", Model.Passaporte, "Passaporte", "", "2"))
+                @Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "PassaporteSerie", Model.PassaporteSerie, "Série do passaporte", "", "2"))
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+<select id="cidadeO" style="display: none"></select>
+@Html.HiddenFor(a => a.Id)
+@Html.HiddenFor(a => a.DataCadastro)
+@Html.HiddenFor(a => a.UsuarioCadastro)
+@Html.HiddenFor(a => a.DataAlteracao)
+@Html.HiddenFor(a => a.UsuarioAlteracao)
+@Html.HiddenFor(a => a.StatusPagamento)
+@Html.HiddenFor(a => a.Tipo)
+        @Html.HiddenFor(a => a.RazaoSocial)
+@Html.HiddenFor(a => a.Cpf)
+@Html.HiddenFor(a => a.Cnpj)
+@Html.HiddenFor(a => a.Rg)
+@Html.HiddenFor(a => a.RgData)
+@Html.HiddenFor(a => a.Finalidade)
+@Html.HiddenFor(a => a.FinalidadeComplemento)
+@Html.HiddenFor(a => a.Profissao)
+@Html.HiddenFor(a => a.Nirf)
+@Html.HiddenFor(a => a.Cep)
+@Html.HiddenFor(a => a.Logradouro)
+@Html.HiddenFor(a => a.Numero)
+@Html.HiddenFor(a => a.Complemento)
+@Html.HiddenFor(a => a.Bairro)
+@Html.HiddenFor(a => a.Cidade)
+@Html.HiddenFor(a => a.EstadoCivil)
+    @Html.HiddenFor(a => a.Instancia)
+@Html.HiddenFor(a => a.FiltroAcao)
+@Html.HiddenFor(a => a.TipoCnd)
+@Html.HiddenFor(a => a.Estado)
+    @Html.HiddenFor(a => a.Telefone)
+@Html.HiddenFor(a => a.StatusPagamento)
+@Html.HiddenFor(a => a.StatusPagamentoOperador)
+@Html.HiddenFor(a => a.Sexo)
+@Html.HiddenFor(a => a.EstadoEmissao)
+@Html.HiddenFor(a => a.CidadeEmissao)
+@Html.HiddenFor(a => a.Observacao)
+@Html.HiddenFor(a => a.Valor)
+@Html.HiddenFor(a => a.StatusTransacao)
+@Html.HiddenFor(a => a.TidTransacao)
+@Html.HiddenFor(a => a.PixCopiaCola)
+@Html.HiddenFor(a => a.PixQrCode)
+@Html.HiddenFor(a => a.DataFinalizado)
+@Html.HiddenFor(a => a.DataAtribuicao)
+@Html.Hidden("janela", ViewData["janela"])
+@Html.Hidden("acao", ViewData["acao"])

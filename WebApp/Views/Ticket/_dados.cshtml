@@ -1,0 +1,88 @@
+﻿@model Domain.Ticket
+@using HtmlHelper = WebApp.Models.HtmlHelper
+@Html.Raw(HtmlHelper.MontaDiv("4", "Cadastro", $"{Model.DataCadastro} - {Model.UsuarioCadastro}"))
+@Html.Raw(HtmlHelper.MontaDiv("4", "Última alteração", $"{Model.DataAlteracao} - {Model.UsuarioAlteracao}"))
+@Html.Raw(HtmlHelper.MontaDiv("4", "Local de emissão", $"{Model.CidadeEmissao} - {Model.EstadoEmissao}"))
+@Html.Raw(HtmlHelper.MontaDiv("4", "Cod. Transação", $"{Model.TidTransacao}"))
+@Html.Raw(HtmlHelper.MontaDiv("4", "Tipo de certidão", $"{Model.Tipo} - {Model.SubTipo}"))
+<div class="col-12">
+    <div class="card">
+        <div class="card-header" style="font-weight: bold">Dados pessoais </div>
+        <div class="card-body">
+            <div class="row mt-2">
+                @Html.Raw(HtmlHelper.MontaDiv("2", "Cpf", Model.Cpf))
+                @Html.Raw(HtmlHelper.MontaDiv("4", "Nome completo", Model.Nome))
+                @Html.Raw(HtmlHelper.MontaDiv("3", "Nome mãe", Model.NomeMae))
+                @Html.Raw(HtmlHelper.MontaDiv("3", "Nome pai", Model.NomePai))
+                @Html.Raw(HtmlHelper.MontaDiv("3", "Gênero", Model.Sexo))
+                @Html.Raw(HtmlHelper.MontaDiv("3", "Nacionalidade", Model.Nacionalidade))
+                @Html.Raw(HtmlHelper.MontaDiv("2", "Estado onde nasceu", Model.EstadoNasceu))
+                @Html.Raw(HtmlHelper.MontaDiv("2", "Cidade onde nasceu", Model.CidadeNasceu))
+                @Html.Raw(HtmlHelper.MontaDiv("2", "Celular (what'sapp)", Model.Celular))
+                @Html.Raw(HtmlHelper.MontaDiv("3", "Email", Model.Email))
+                @Html.Raw(HtmlHelper.MontaDiv("2", "Data Nascimento", Model.DataNascimento))
+                @Html.Raw(HtmlHelper.MontaDiv("2", "Estado civil", Model.EstadoCivil))
+                @Html.Raw(HtmlHelper.MontaDiv("2", "Profissão", Model.Profissao))
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-12">
+    <div class="card">
+        <div class="card-header" style="font-weight: bold">Dados empresa </div>
+        <div class="card-body">
+            <div class="row mt-2">
+                @Html.Raw(HtmlHelper.MontaDiv("4", "CNPJ", Model.Cnpj))
+                @Html.Raw(HtmlHelper.MontaDiv("8", "Razão social", Model.RazaoSocial))
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-12">
+    <div class="card">
+        <div class="card-header" style="font-weight: bold">Documento </div>
+        <div class="card-body">
+            <div class="row mt-2">
+                @Html.Raw(HtmlHelper.MontaDiv("2", "Nº do documento", Model.Rg))
+                @Html.Raw(HtmlHelper.MontaDiv("2", "Data de emissão", Model.RgData))
+                @Html.Raw(HtmlHelper.MontaDiv("2", "Orgão emissor", Model.Emissor))
+                @if (Model.Emissor == "")
+                {
+                    @Html.Raw(HtmlHelper.MontaDiv("2", "Qual emissor", Model.EmissorOutro))
+                }
+                @Html.Raw(HtmlHelper.MontaDiv("2", "Estado emissor", Model.EmissorEstado))
+                @Html.Raw(HtmlHelper.MontaDiv("2", "Passaporte", Model.Passaporte))
+                @Html.Raw(HtmlHelper.MontaDiv("2", "Série do passaporte", Model.PassaporteSerie))
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-12">
+    <div class="card">
+        <div class="card-header" style="font-weight: bold">Demais informações </div>
+        <div class="card-body">
+            <div class="row mt-2">
+                @{
+                    if (!string.IsNullOrWhiteSpace(Model.EstadoEmissao))
+                        @Html.Raw(HtmlHelper.MontaDiv("3", "Estado de emissão", Model.EstadoEmissao))
+                    if (!string.IsNullOrWhiteSpace(Model.CidadeEmissao))
+                        @Html.Raw(HtmlHelper.MontaDiv("3", "Cidade de emissão", Model.CidadeEmissao))
+                    if (!string.IsNullOrWhiteSpace(Model.TipoCnd))
+                        @Html.Raw(HtmlHelper.MontaDiv("3", "Filtros por tipo de ação", Model.TipoCnd))
+                    if (!string.IsNullOrWhiteSpace(Model.FiltroAcao))
+                        @Html.Raw(HtmlHelper.MontaDiv("3", "Tipo de Certidão", Model.FiltroAcao))
+                    if (!string.IsNullOrWhiteSpace(Model.Finalidade))
+                        @Html.Raw(HtmlHelper.MontaDiv("3", "Finalidade", Model.Finalidade))
+                    if (!string.IsNullOrWhiteSpace(Model.FinalidadeComplemento))
+                        @Html.Raw(HtmlHelper.MontaDiv("3", "Finalidade Complemento", Model.FinalidadeComplemento))
+                    if (!string.IsNullOrWhiteSpace(Model.Instancia))
+                        @Html.Raw(HtmlHelper.MontaDiv("3", "Instância", Model.Instancia))
+                    if (!string.IsNullOrWhiteSpace(Model.Nirf))
+                        @Html.Raw(HtmlHelper.MontaDiv("3", "NIRF/CIB", Model.Nirf))
+                    if (!string.IsNullOrWhiteSpace(Model.Logradouro))
+                        @Html.Raw(HtmlHelper.MontaDiv("3", "Logradouro", Model.Logradouro))
+                }
+            </div>
+        </div>
+    </div>
+</div>

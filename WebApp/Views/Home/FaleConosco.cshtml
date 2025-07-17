@@ -1,0 +1,81 @@
+﻿@{
+    ViewBag.Titulo = "Fale Conosco - Paraíso Animal Crematório";
+    ViewBag.Descricao = "Fale Conosco - Paraíso Animal Crematório, ambiente estruturado para acolher sua família, trazendo paz e conforto. Dignidade e respeito ao amigo que te deu amor sem limites. Cremações presenciais. Licenciado pelo IBRAM/DF. Serviços: Cremação Presencial, Serviço humanizado, Capela ecumênica.";
+    Layout = "~/Views/Shared/_Site.cshtml";
+}
+@section scripts
+{
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script>
+        $(document).ready(function () {
+            $("#faleconosco").addClass("active");
+        });
+    </script>
+}
+<div class="jumbotron jumbotron-fluid">
+    <div class="container">
+        <div class="jumbo-heading aos-init aos-animate" data-aos="fade-up">
+            <h1>Fale Conosco</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Fale Conosco</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<div class="page">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 contact-form3 bg-light h-100">
+                <div class="contact-image bg-light">
+                    <i class="fas fa-envelope bg-light"></i>
+                </div>
+                <h5 class="text-center mt-3">Enviar mensagem</h5>
+                <div id="contact_form">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>Nome<span class="required">*</span></label>
+                                <input type="text" name="nome" id="nome" class="form-control" required="">
+                            </div>
+                            <div class="col-md-12">
+                                <label>E-mail <span class="required">*</span></label>
+                                <input type="email" name="email" id="email" class="form-control" required="">
+                            </div>
+                            <div class="col-md-12">
+                                <label>Celular</label>
+                                <input type="text" name="celular" id="celular" class="form-control mask_celular">
+                            </div>
+                            <div class="col-md-12">
+                                <label>Mensagem <span class="required">*</span></label>
+                                <textarea name="mensagem" id="mensagem" class="form-control" rows="3" required=""></textarea>
+                            </div>
+                            <div class="col-12 mt-2">
+                                <div class="g-recaptcha" data-sitekey="6LeEzn4oAAAAAMtA8I6Q18JgYZjPihlA7tGkJZNY"></div>
+                                <div class="m-t-20" id="retornoajax"></div>
+                            </div>
+                        </div>
+                        <button type="submit" id="submit_btn" value="Submit" class="btn btn-primary btn-block mt-3">Enviar mensagem</button>
+                    </div>
+                    <div id="contact_results"></div>
+                </div>
+            </div>
+           <div class="col-lg-7 offset-lg-1 res-margin">
+                <h4>Entre em contato</h4>
+                <p>Obrigado pela visita. Deixe uma mensagem e retornaremos o mais breve possível.</p>
+                <ul class="list-inline mt-3 list-contact colored-icons">
+                    <li class="list-inline-item"><i class="fa fa-envelope margin-icon"></i><a href="mailto:contato@paranimal.com.br">contato@paranimal.com.br</a></li>
+                    <li class="list-inline-item"><i class="fa fa-phone margin-icon"></i><a href="https://wa.me/+5561998230801" target="_blank">(61) 99823-0801</a></li>
+                    <li class="list-inline-item"><i class="fa fa-map-marker margin-icon"></i><a href="https://maps.app.goo.gl/afawVuoorFyCSffK9" target="_blank">Chácara 898 E Rua 21, S/N, Núcleo Rural Lago Oeste</a></li>
+                </ul>
+                <div class="mt-5 leaflet-container leaflet-touch leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom" tabindex="0" style="position: relative;">
+                    <iframe style="width:100%;height:420px;" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d61484.37025492974!2d-48.003218842944136!3d-15.603765027429862!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x935a4d93661735e7%3A0x88224edbfdab1c7a!2sPara%C3%ADso%20Animal%20Cremat%C3%B3rio%20de%20Animais%20Dom%C3%A9sticos!5e0!3m2!1spt-BR!2sin!4v1638897350380!5m2!1spt-BR!2sin" width="600" height="450" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

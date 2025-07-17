@@ -1,0 +1,19 @@
+﻿@if (ViewBag.Retorno != null)
+{
+
+    var ret = ViewBag.Retorno as string[];
+    if (ret != null)
+    {
+        <script type="text/javascript">
+            window.parent.Notifica(getTitle("@ret[0]"), "@Html.Raw(ret[1])", "@ret[0]");
+        </script>
+        if (@ret[0] == "success")
+        {
+            <script>
+                window.parent.myTable.api().ajax.reload();
+                window.parent.$('#modalAdm').modal("hide");
+            </script>
+        }
+
+    }
+}

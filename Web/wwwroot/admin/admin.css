@@ -1,0 +1,40 @@
+﻿body { font-size: 10pt !important; }
+a.nav-link.sidebartoggler.hidden-sm-down.waves-effect.waves-dark { display: none;}
+.mobile { display: none !important;}
+a.has-arrow.waves-effect.waves-dark.active { background: none !important;}
+.dec-hide { display: none; }
+.fotoAdd { position: relative; }
+.fotoAdd .hover { display: none; }
+.fotoAdd:hover .hover { -webkit-animation: stripes 2s linear infinite; animation: stripes 2s linear infinite; background-color: #000; background-size: 30px 30px; display: block; height: 100%; opacity: 0.7; position: absolute; width: 100%; }
+.fotoAdd:hover .btn { background-color: transparent; border: solid 1px #fff; color: #fff; margin: 5px; }
+.tab-pane .row p { border-bottom: 1px solid #ddd; min-height: 51px; padding: 0 0 5px 0; }
+.tab-pane .row p .rotulo { font-size: 8pt; color: #000000; }
+.table .dropdown-item  { font-size: 11pt;}
+.empty-message a { color: #000 !important; font-size: 9pt; padding: 0; margin: 0;}
+.hide-item{ display: none;}
+.error .form-control { border-color: #e9edf2 !important; }
+.has-error .form-control { border-color: #ef5350 !important; }
+.vermelho td { background-color: #f3dada !important; }
+.verde td { background-color: #dbefcf !important; }
+#detalhes .rotulo { font-weight: 700; }
+.card-no-border .card { border-radius: 15px !important; }
+@media (max-width:992px) { .mobile { display: block !important; position: absolute; left: 21px; top: 12px;  }
+}
+@media (min-width: 992px) {
+    .modal-lg { max-width: 98%; }
+}
+.dataTables_info { float: left; width: 50%; }
+.dataTables_paginate { float: right !important; width: 50% !important; }
+.dataTables_paginate ul { float: right !important;}
+.floating-labels .help-block { min-height: 0 !important; border-bottom: none !important; font-size: 8pt !important; font-weight: 700; }
+.codex-editor__redactor{ padding-bottom: 35px !important; }
+.ce-block__content { max-width: 89% !important;}
+.ce-toolbar  { left: 65px !important; right: auto;}
+
+.tab-pane .row .editor p { padding: 0 !important; border: none !important; margin: 0 !important; min-height: auto; }
+.form-control{ font-size: 10pt !important; color: #000!important;}
+.draggable-tag{ background-color: #dddddd;}
+.table {width: 100% !important;}
+
+.em-aberto { background-color: #ced0d3 !important; }
+.em-resposta { background-color: #c412c7 !important; }

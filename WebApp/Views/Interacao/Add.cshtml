@@ -1,0 +1,63 @@
+﻿@{
+    Layout = "~/Views/Shared/_Modal.cshtml";
+    var cotroller = ViewContext.RouteData.Values["controller"]?.ToString();
+}
+@section scripts
+{
+    <script>
+        $(function () {
+            $('#form_geral').on('submit', function (e) {
+                e.preventDefault();
+                var form = $(this);
+                var $valid = !form.jqBootstrapValidation("hasErrors");
+                if ($valid === true) {
+                    window.parent.$(".preloader").show();
+                    var formData = new FormData(this);
+                    var file = document.getElementById("Upload").files[0];
+                    if (file != undefined) {
+                        formData.append("file", file);
+                    };
+                    $.ajax({
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        type: "POST",
+                        dataType: "json",
+                        url: form.attr("action"),
+                        data: formData,
+                        success: function (ret) {
+                            window.parent.$(".preloader").hide();
+                            if (ret.cssClass === "success") {
+                                window.parent.NotificaClose(getTitle(ret.cssClass), ret.mensagem, ret.cssClass);
+                                if (ret.janela == "bisneta") {
+                                    window.parent.$('#modalPaiPaiAdm').modal("hide");
+                                } else {
+                                    window.parent.$('#modalAdm').modal("hide");
+                                    if (window.parent.myTable != null) {
+                                        window.parent.myTable.api().ajax.reload();
+                                    }
+                                }
+                            } else {
+                                window.parent.Notifica(getTitle(ret.cssClass), ret.mensagem, ret.cssClass, ret.funcao);
+                            }
+                        }
+                    });
+                } else {
+                    window.parent.Notifica("Atenção", "Preencha os campos obrigatórios", "warning");
+                }
+            });
+        })
+    </script>
+}
+
+<form asp-action="Salvar" asp-controller="@cotroller" method="post" enctype="multipart/form-data" role="form" class="floating-labels" id="form_geral" novalidate="">
+    <div class="row mt-3">
+        <partial name="_add" model="Model" />
+        <div class="col-md-12">
+            <button id="salvar" type="submit" class="btn btn-info waves-effect waves-light m-t-10">Salvar</button>
+            <input id="continua" name="continua" type="hidden" value="" />
+        </div>
+        <p>&nbsp;</p>
+    </div>
+    @Html.Hidden("rediret", "#detalhes")
+</form>

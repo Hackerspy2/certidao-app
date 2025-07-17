@@ -1,0 +1,75 @@
+﻿@using System.Configuration
+@using WebApp.Models
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE" />
+    <meta property="og:title" content="@ViewBag.Title" />
+    <meta property="og:type" content="website" />
+    @*<meta property="og:url" content="@Request.Url" />*@
+    <meta http-equiv="Cache-control" content="public" />
+    <meta property="og:description" content="@ViewBag.Description" />
+    @*<meta property="og:site_name" content="@ConfigurationManager.AppSettings["sistema"]" />*@
+    <meta property="og:image" content="@ViewBag.Imagem" />
+    <meta name="robots" content="index, follow" />
+    <meta name="keywords" content="@ViewBag.KeyWords" />
+    <meta name="description" content="@ViewBag.Description" />
+    @*<meta name="author" content="@ConfigurationManager.AppSettings["sistema"]" />*@
+    <meta name="robots" content="all" />
+    <meta name="rating" content="General" />
+    <meta name="language" content="pt-br" />
+    <meta name="doc-rights" content="www.abo-df.org.br" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="stylesheet" href="/Content/v1/css/bootstrap.min.css">
+    <link href="~/Content/v1/css/font-awesome.css" rel="stylesheet" />
+    <link href="~/Content/css/icons/material-design-iconic-font/css/materialdesignicons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/Content/v1/css/swiper.min.css">
+    <link href="~/Content/v1/css/animate.css" rel="stylesheet" />
+    <link href="~/Content/v1/css/aos.css" rel="stylesheet" />
+    <link href="~/Content/v1/css/jssocials.css" rel="stylesheet" />
+    <link href="~/Content/v1/css/jssocials-theme-minima.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/Content/v1/css/style.css">
+    @RenderSection("styles", false)
+</head>
+<body>
+	<div>
+		@RenderBody()
+	</div>
+<div class="modal inmodal" id="modalAdm" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+            </div>
+            <div class="modal-body">
+                <iframe width="99.6%" frameborder="0" height="100%"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+<script type='text/javascript' src='/Content/v1/js/jquery.js'></script>
+<script type='text/javascript' src="~/Content/v1/js/bootstrap.min.js"></script>
+<script type='text/javascript' src='/Content/v1/js/jquery.collapsible.min.js'></script>
+<script type='text/javascript' src='/Content/v1/js/swiper.min.js'></script>
+<script type='text/javascript' src='/Content/v1/js/jquery.countdown.min.js'></script>
+<script type='text/javascript' src='/Content/v1/js/circle-progress.min.js'></script>
+<script type='text/javascript' src='/Content/v1/js/jquery.countTo.min.js'></script>
+<script type='text/javascript' src='/Content/v1/js/jquery.barfiller.js'></script>
+<script type='text/javascript' src="~/Content/v1/js/jquery.validate.js"></script>
+<script type='text/javascript' src="~/Content/v1/js/jquery.validate.unobtrusive.js"></script>
+<script type='text/javascript' src="~/Content/v1/js/mascara.js"></script>
+<script type='text/javascript' src="~/Content/v1/js/maskfunction.js"></script>
+<script type='text/javascript' src="~/Content/v1/js/aos.js"></script>
+<script type='text/javascript' src="~/Content/v1/js/jssocials.js"></script>
+<script type='text/javascript' type='text/javascript' src='/Content/v1/js/custom.js'></script>
+</body>
+
+</html>

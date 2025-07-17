@@ -1,0 +1,30 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Modal.cshtml";
+}
+    <div class="row-fluid">
+        @{Html.RenderPartial("_RetornoEdit");}
+        <form asp-action="AlterarSenha" method="post" enctype="multipart/form-data" role="form" class="floating-labels formAsync" id="form_geral" novalidate="">
+
+        <fieldset class="form-inline">
+            @*<div class="control-group">
+                <label>Senha atual*: @Html.MyValidationMessageFor(m => m.OldPassword)</label>
+                    @Html.PasswordFor(m => m.OldPassword, new { @maxlength = 20, @class = "span3" })
+            </div>
+            <div class="control-group">
+                <label>Nova senha*: @Html.MyValidationMessageFor(m => m.NewPassword)</label>
+                    @Html.PasswordFor(m => m.NewPassword, new { @maxlength = 20, @class = "span3" })
+            </div>
+            <div class="control-group">
+                <label>Confirmação*: @Html.MyValidationMessageFor(m => m.ConfirmPassword)</label>
+                    @Html.PasswordFor(m => m.ConfirmPassword, new { @maxlength = 20, @class = "span3" })
+
+            </div>
+            <div class="control-group">
+                <label></label>
+                    <button id="salvar" class="btn btn-primary btn-mini btn-icon glyphicons ok_2 max-cad"><i></i>Salvar</button>
+                    <input id="continua" name="continua" type="hidden" value="" />
+            </div>*@
+        </fieldset>
+        </form>
+    </div>

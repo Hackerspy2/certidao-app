@@ -1,0 +1,40 @@
+﻿@*@{
+    Layout = "~/Views/Shared/_Modal.cshtml";
+}
+@section scripts
+{
+    <script>
+    $(function() {
+        $("body").css("background-color", "#fff");
+    });
+</script>
+}
+    @using (Html.BeginForm("LembrarSenha", "Pessoa", FormMethod.Post, new {enctype = "multipart/form-data", id = "formulario"}))
+    {
+        <p>&nbsp;</p>
+        if (Model.Retorno.Length > 0)
+        {
+            <div class="alert alert-@Model.Retorno[0]">@Model.Retorno[1]</div>
+        }
+            <div>
+                @Html.ValidationSummary(true)
+            </div>
+            <div class="col-lg-6 col-sm-6 col-md-6 col-xs-12">
+                <div class="form-group">
+                    <label>Nº da Matrícula*: @Html.MyValidationMessageFor(m => m.Email)</label>
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control so-numeros", placeholder = "Nº da matrícula de acesso" })
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label></label>
+                    <button id="salvar" class="ladda-button btn btn-primary" data-style="expand-right">
+                        <span class="ladda-label">Recuperar</span>
+                        <span class="ladda-spinner"></span>
+                        <div class="ladda-progress" style="width: 0px;"></div>
+                    </button>
+                    <input id="continua" name="continua" type="hidden" value="" />
+                </div>
+            </div>
+    }*@

@@ -1,0 +1,46 @@
+﻿<aside class="left-sidebar">
+    <div class="scroll-sidebar">
+        <nav class="sidebar-nav">
+            <ul id="sidebarnav">
+                <li class="nav-devider"></li>
+                <li><a asp-action="DashBoard" asp-controller="Home" class="has-arrow waves-effect waves-dark" aria-expanded="false"><i class="mdi mdi-gauge"></i><span class="hide-menu">Dashboard</span></a></li>
+                @if (Model.IsSuporte)
+                {
+                    <li>
+                        <a class="has-arrow waves-effect waves-dark" href="javascript:;"><i class="mdi mdi-av-timer"></i><span class="hide-menu">Ticket's</span></a>
+                        <ul aria-expanded="false" class="collapse">
+                            <li><a href="@Url.Action("Lista", "Ticket")">Em operação</a></li>
+                            <li><a href="@Url.Action("Geral", "Ticket")">Geral</a></li>
+                            <li><a href="@Url.Action("Concluidos", "Ticket")">Concluídos</a></li>
+                        </ul>
+                    </li>
+                    <li><a class="has-arrow waves-effect waves-dark" asp-action="Relatorio" asp-controller="Ticket"><i class="mdi mdi-chart-arc"></i><span class="hide-menu">Relatório Baixa</span></a></li>
+                    <li><a class="has-arrow waves-effect waves-dark" asp-action="Estatisticas" asp-controller="Ticket"><i class="mdi mdi-chart-bar"></i><span class="hide-menu">Estatisticas</span></a></li>
+                    <li><a class="has-arrow waves-effect waves-dark" asp-action="Lista" asp-controller="Pessoa"><i class="mdi mdi-account-circle"></i><span class="hide-menu">Usuários</span></a></li>
+                }
+                else
+                {
+                    var perfil = Base.GetDadosUsuario<string>(User, "financeiro");
+                    if (perfil == "liberado")
+                    {
+                        <li>
+                            <a class="has-arrow waves-effect waves-dark" href="javascript:;"><i class="mdi mdi-av-timer"></i><span class="hide-menu">Ticket's</span></a>
+                            <ul aria-expanded="false" class="collapse">
+                                <li><a href="@Url.Action("Lista", "Ticket")">Em operação</a></li>
+                                <li><a href="@Url.Action("Geral", "Ticket")">Geral</a></li>
+                                <li><a href="@Url.Action("Concluidos", "Ticket")">Concluídos</a></li>
+                            </ul>
+                        </li>
+                    }
+                    else
+                    {
+                        <li><a class="has-arrow waves-effect waves-dark" asp-action="Lista" asp-controller="Ticket"><i class="mdi mdi-av-timer"></i><span class="hide-menu">Ticket's</span></a></li>
+                        <li><a class="has-arrow waves-effect waves-dark" asp-action="Concluidos" asp-controller="Ticket"><i class="mdi mdi-av-timer"></i><span class="hide-menu">Concluídos</span></a></li>
+                    }
+
+                }
+            </ul>
+        </nav>
+    </div>
+
+</aside>

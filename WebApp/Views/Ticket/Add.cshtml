@@ -1,0 +1,63 @@
+﻿@model Domain.Ticket
+@{
+    Layout = "~/Views/Shared/_Modal.cshtml";
+    var cotroller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var admin = Base.GetDadosUsuario<bool>(User, "IsSuporte");
+}
+@section scripts{
+    <script>
+        var validaEmissor = function () {
+            if ($("#Emissor").val() == "OUTROS") {
+                $("#divEmissorOutro").show();
+            } else {
+                $("#divEmissorOutro").hide();
+            }
+        }
+        $(function () {
+            validaEmissor();
+            $("#Emissor").change(function () {
+                validaEmissor();
+            });
+            carregarEstados('#EstadoNasceu', '#CidadeNasceu', '@Html.Raw(Model.EstadoNasceu)', '@Html.Raw(Model.CidadeNasceu)');
+            carregarEstados('#EmissorEstado', '#cidadeO', '@Html.Raw(Model.EmissorEstado)', '');
+            $("#Cpf").blur(function (e) {
+                e.preventDefault();
+                var campo = $(this);
+                if (campo.val() != "") {
+                    window.parent.$(".preloader").show();
+                    $.ajax({
+                        type: "GET",
+                        dataType: "json",
+                        url: "/@cotroller/ValidaCad",
+                        data: { dados: campo.val(), id: $("#Id").val() },
+                        success: function (ret) {
+                            if (ret.cssClass == "warning") {
+                                window.parent.Notifica(getTitle(ret.cssClass), ret.mensagem, ret.cssClass);
+                                $("#salvar").prop("disabled", true);
+                            } else {
+                                $("#salvar").prop("disabled", false);
+                            }
+                            window.parent.$(".preloader").hide();
+                        }
+                    });
+                }
+            });
+        @if (admin)
+        {
+            @Html.Raw($"carregarDadosDrop('#IdPessoa', '/Pessoa/GetDados', '{Model.IdPessoa}');")
+        }
+            
+        });
+    </script>
+}
+<form asp-action="Salvar" asp-controller="@cotroller" method="post" enctype="multipart/form-data" role="form" class="floating-labels formAsync" id="form_geral" novalidate="">
+    <div class="row mt-3">
+        <partial name="_add" model="Model" />
+        <div class="col-md-12">
+            <button id="salvar" type="submit" class="btn btn-info waves-effect waves-light m-t-10">Salvar</button>
+            <input id="continua" name="continua" type="hidden" value="" />
+        </div>
+        <p>&nbsp;</p>
+    </div>
+    @Html.Hidden("rediret", "#detalhes")
+</form>

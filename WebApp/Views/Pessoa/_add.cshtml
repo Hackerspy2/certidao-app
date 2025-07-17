@@ -1,0 +1,43 @@
+﻿@using Domain
+@using Repository.Util
+@model Pessoa
+@using HtmlHelper = WebApp.Models.HtmlHelper
+@{
+    var tipo = ViewData["acao"]!.ToString();
+}
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "Cpf", Model.Cpf, "CPF/CNPJ", "", coluns: "2", classe: "mask_cpfCnpj"))
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "Nome", Model.Nome, "Nome", "*", "4"))
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "Rg", Model.Rg, "Rg", "", "2", ""))
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "RgEmissor", Model.RgEmissor, "Orgão emissor", "", "2", ""))
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "DataNascimento", Model.DataNascimento, "Nascimento", "", "2", "", "mask_data"))
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Email, "Email", Model.Email, "E-mail", "*", "4"))
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Password, "Senha", "", "Senha", (tipo == "add"?"*" : ""), "2"))
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "Telefone", Model.Telefone, "Telefone", "", "2", "", "mask_telefone"))
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "Celular", Model.Celular, "Celular", "", "2", "", "mask_celular"))
+<div class="clearfix"></div>
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "Cep", Model.Cep, "Cep", "", "2", "", "mask_cep"))
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "Logradouro", Model.Logradouro, "Logradouro", "", "5"))
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "Numero", Model.Numero, "Número", "", "2", classe: "so-numeros"))
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "Bairro", Model.Bairro, "Bairro", "", "3"))
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "Complemento", Model.Complemento, "Complemento", "", "2"))
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Select, "Estado", Model.Estado, "Estado", "", "2"))
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Select, "Cidade", Model.Cidade, "Cidade", "", "3"))
+
+
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Select, "Status",  Model.Status, "Status", "*", "2", "ListStats"))
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Select, "IsSuporte",  Model.IsSuporte, "Administrador", "*", "2", "ListComSimNao"))
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Select, "Perfil", Model.Perfil, "Perfil", "", "2", "ListPerfil"))
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "Taxa", Model.Taxa, "Taxa", "*", "2", classe: "mask_decimal"))
+
+@Html.HiddenFor(a => a.IsUsuario)
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Textarea, "Observacao", Model.Observacao, "Observações", "", "12"))
+<div class="clearfix"></div>
+@Html.HiddenFor(a => a.Id)
+@Html.HiddenFor(a => a.DataCadastro)
+@Html.HiddenFor(a => a.UsuarioCadastro)
+@Html.HiddenFor(a => a.DataAlteracao)
+@Html.HiddenFor(a => a.UsuarioAlteracao)
+@Html.HiddenFor(a => a.Token)
+@Html.HiddenFor(a => a.Foto)
+@Html.Hidden("janela", ViewData["janela"])
+@Html.Hidden("acao", ViewData["acao"])

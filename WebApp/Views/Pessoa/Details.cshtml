@@ -1,0 +1,32 @@
+﻿@using System.Reflection
+@using WebApp.Models
+@using HtmlHelper = WebApp.Models.HtmlHelper
+@model Domain.Pessoa
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Modal.cshtml";
+
+}
+@section scripts
+{
+    <script>
+        
+        $(function() {
+           
+        });
+    </script>
+}
+<div class="animated fadeIn">
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item"> <a class="nav-link active" data-toggle="tab" href="#detalhes" role="tab"><span class="hidden-sm-up"><i class="ti-home"></i></span> <span class="hidden-xs-down">Detalhes</span></a> </li>
+    </ul>
+    <div class="tab-content tabcontent-border">
+        <div class="tab-pane active" id="detalhes">
+            <div class="p-20">
+                <div class="row">
+                    @{ Html.RenderPartial("_dados"); }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

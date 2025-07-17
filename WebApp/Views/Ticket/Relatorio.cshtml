@@ -1,0 +1,117 @@
+﻿@using HtmlHelper = WebApp.Models.HtmlHelper
+@using Azure.Core
+@using iDevCL
+@using Repository.Util
+@model IList<Domain.Ticket>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString()!;
+    var titulo = "Tickets";
+    var isAdmin = Base.GetDadosUsuario<bool>(User, "IsSuporte") ? "" : "hide-item";
+    var request = Context.Request.Query["status"];
+    decimal? soma = 0m;
+}
+@section scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function() {
+            activeUrl("@ViewBag.Url");
+            carregarDadosDrop("#idPessoa", "/Pessoa/GetDados", "@ViewBag.idPessoa");
+            $(document).delegate("#baixar",
+                "click",
+                function(e) {
+                    e.preventDefault();
+                    var link = $(this);
+                    const modal = $("#modalPaiConfirm").one("click",
+                        "#btnPaiConfirme",
+                        function() {
+                            $("#preloader").show();
+                            $.ajax({
+                                url: `/Ticket/Baixar/`,
+                                type: "get",
+                                data: { dataInicial: $("#dataInicial").val(), dataFinal: $("#dataFinal").val(), idPessoa: $("#idPessoa").val() },
+                                contentType: "application/json",
+                                success: function(result) {
+                                    $("#preloader").hide();
+                                    link.remove();
+                                    Notifica(getTitle(result.cssClass), "Baixado com sucesso!", result.cssClass);
+                                }
+                            });
+                        });
+                    modal.find(".modal-footer").find("#btnPaiConfirme").html("Sim");
+                    modal.find(".modal-footer").find("#btnPaiCancelar").html("Não");
+                    modal.find(".modal-body").html(`Tem certeza que deseja marcar como baixado, isso não pode ser desfeito!`);
+                    modal.on("show", function() {}).modal({ show: true, keyboard: false });
+                });
+        });
+    </script>
+}
+<div class="row page-titles">
+    <div class="col-md-5">
+        &nbsp;
+    </div><div class="col-md-7 align-self-center"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="/">Dashboard</a></li><li class="breadcrumb-item active">Relatório Baixa</li></ol></div><div></div>
+</div>
+<div class="animated fadeInUp">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-5">Filtros  <span id="total" class="float-right"></span></h4>
+                    <div class="animated fadeInUp">
+                        <div class="floating-labels">
+                            <form method="get">
+                                <div class="row filtro">
+                                    @Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "dataInicial", DateTime.Today, "De", "", "2", classe: "mask_data"))
+                                    @Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "dataFinal", ViewBag.dataFinal, "Até", "", "2", classe: "mask_data"))
+                                    @Html.Raw(HtmlHelper.MontaInput(InputTypes.Select, "idPessoa", "", "Operador", "", "3"))
+                                    @Html.Raw(HtmlHelper.MontaInput(InputTypes.Select, "status", ViewBag.status, "Status", "", "3", "StatusPagamentoOperador"))
+                                    <div class="col-lg-2 col-sm-2 col-md-2 col-12">
+                                        <button type="submit" class="waves-effect waves-light btn-inverse btn btn-sm mt-3">Gerar</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    @if (Model.Any())
+                    {
+                        var grupoPessoas = Model.GroupBy(x => x.Pessoa.Nome).ToList();
+                        <button id="baixar" type="button" class="btn btn-sm btn-primary">Marcar como baixado</button>
+                        <table class="display table table-hover table-striped table-bordered dataTable no-footer">
+                            <thead>
+                            <tr>
+                                <th>Operador</th>
+                                <th>Ticktes</th>
+                                <th>Total</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var item in grupoPessoas)
+                            {
+                                var taxa = item.Take(1).FirstOrDefault().Pessoa.Taxa;
+                                var total = item.Count(x => x.Pessoa.Nome == item.Key);
+                                soma += (total * taxa);
+                                <tr>
+                                    <td>@item.Key</td>
+                                    <td class="text-center">@total</td>
+                                    <td class="text-right">@($"{total * taxa:c}")</td>
+                                </tr>
+                            }
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td>Total</td>
+                                    <td class="text-center">@Model.Count</td>
+                                    <td class="text-right">@($"{soma:c}")</td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    }
+                    else
+                    {
+                        <h4 class="text-center">Nenhum registro encontrado!</h4>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,169 @@
+﻿@using WebApp.Models
+@using HtmlHelper = WebApp.Models.HtmlHelper
+@model IList<Domain.Ticket>
+@{
+    ViewBag.Title = "DashBoard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var controller = "Debito";
+    //var classDetails = Base.ShowHideVerificaPermissao(string.Format("{0}Details", controller));
+    //var classEdit = Base.ShowHideVerificaPermissao(string.Format("{0}Edit", controller));
+    //var classDel = Base.ShowHideVerificaPermissao(string.Format("{0}Del", controller));
+    var financeiroAcesso = Base.GetDadosUsuario<string>(User, "financeiro");
+    //var hiddem = dados ? "" : "display: none";
+    var titulo = "Dashboard";
+    var emaberto = Model.Any() ? Math.Round((decimal)Model.Count(a => a.Status == "Em aberto") / Model.Count() * 100, 2).ToString().Replace(",", ".") : "0";
+    var estornado = Model.Any() ? Math.Round((decimal)Model.Count(a => a.Status == "Estornado") / Model.Count() * 100, 2).ToString().Replace(",", ".") : "0";
+    var financeiro = Model.Any() ? Math.Round((decimal)Model.Count(a => a.Status == "Financeiro") / Model.Count() * 100, 2).ToString().Replace(",", ".") : "0";
+    var concluido = Model.Any() ? Math.Round((decimal)Model.Count(a => a.Status == "Concluído") / Model.Count() * 100, 2).ToString().Replace(",", ".") : "0";
+    var emAtendimento = Model.Any() ? Math.Round((decimal)Model.Count(a => a.Status == "Em atendimento") / Model.Count() * 100, 2).ToString().Replace(",", ".") : "0";
+    var aguardandoResposta = Model.Any() ? Math.Round((decimal)Model.Count(a => a.Status == "Aguardando resposta do cliente") / Model.Count() * 100, 2).ToString().Replace(",", ".") : "0";
+    var taxa = (decimal)ViewBag.taxa;
+    
+}
+@section scripts
+    {
+    <script type="text/javascript">
+        $(document).ready(function () {
+        });
+    </script>
+}
+@if (financeiroAcesso != "liberado")
+{
+    <div class="row">
+        <div class="col-lg-2 col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <ul class="country-state">
+                        <li>
+                            <h2><a href="/Ticket/Lista/">@(Model.Any() ? Model.Count : 0)</a></h2>
+                            <small>Total</small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <ul class="country-state">
+                        <li>
+                            <h2><a href="/Ticket/Lista/?status=operador">@(Model.Any() ? Model.Count(a => !a.IdPessoa.HasValue) : 0)</a></h2>
+                            <small>Sem operador</small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <ul class="country-state">
+                        <li>
+                            <h2 class="text-success">@($"{(Model.Any() ? Model.Count(a => a is { IdPessoa: not null, Status: "Concluído" } && string.IsNullOrWhiteSpace(a.StatusPagamento)) * taxa : 0):c}")</h2>
+                            <small>Total concluído</small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <ul class="country-state">
+                        <li>
+                            <h2 class="text-warning">@($"{(Model.Any() ? Model.Count(a => a.IdPessoa.HasValue && a.Status != "Concluído" && string.IsNullOrWhiteSpace(a.StatusPagamento)) * taxa : 0):c}")</h2>
+                            <small>Total a finalizar</small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <ul class="country-state">
+                        <li>
+                            <h2 class="text-danger">@($"{(Model.Any() ? Model.Count(a => a is { IdPessoa: not null, Status: "Estornado" } && string.IsNullOrWhiteSpace(a.StatusPagamento)) * taxa : 0):c}")</h2>
+                            <small>Total de estornos</small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <ul class="country-state">
+                        <li>
+
+                            <h2><a href="/Ticket/Lista/?status=aberto">@(Model.Any() ? Model.Count(a => a.Status == "Em aberto") : 0)</a></h2>
+                            <small>Em aberto</small>
+                            <div class="pull-right">@emaberto% </div>
+                            <div class="progress">
+                                <div class="progress-bar em-aberto" role="progressbar" style="width: @emaberto%; height: 6px;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+
+                        </li>
+                        <li>
+                            <h2><a href="/Ticket/Lista/?status=Conclu">@(Model.Any() ? Model.Count(a => a.Status == "Concluído") : 0)</a></h2>
+                            <small>Concluído</small>
+                            <div class="pull-right">@concluido% </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: @concluido%; height: 6px;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <ul class="country-state">
+                        <li>
+                            <h2><a href="/Ticket/Lista/?status=Estor">@(Model.Any() ? Model.Count(a => a.Status == "Estornado") : 0)</a></h2>
+                            <small>Estornado</small>
+                            <div class="pull-right">@estornado% </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: @estornado%; height: 6px;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </li>
+                        <li>
+                            <h2><a href="/Ticket/Lista/?status=Financeiro">@(Model.Any() ? Model.Count(a => a.Status == "Financeiro") : 0)</a></h2>
+                            <small>Financeiro</small>
+                            <div class="pull-right">@financeiro% </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-info" role="progressbar" style="width: @financeiro%; height: 6px;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <ul class="country-state">
+
+                        <li>
+                            <h2><a href="/Ticket/Lista/?status=atendimento">@(Model.Any() ? Model.Count(a => a.Status == "Em atendimento") : 0)</a></h2>
+                            <small>Em atendimento</small>
+                            <div class="pull-right">@emAtendimento% </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: @emAtendimento%; height: 6px;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </li>
+                        <li>
+                            <h2><a href="/Ticket/Lista/?status=resposta">@(Model.Any() ? Model.Count(a => a.Status == "Aguardando resposta do cliente") : 0)</a></h2>
+                            <small>Aguardando resposta do cliente</small>
+                            <div class="pull-right">@aguardandoResposta% </div>
+                            <div class="progress">
+                                <div class="progress-bar em-resposta" role="progressbar" style="width: @aguardandoResposta%; height: 6px;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+}

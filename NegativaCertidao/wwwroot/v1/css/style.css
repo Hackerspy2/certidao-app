@@ -1,0 +1,79 @@
+* { font-family: "Poppins", Sans-serif; }
+body { font-family: "Poppins", Sans-serif; color: #6f6f6f; font-size: 16px; line-height: 1.6; overflow-x: hidden; }
+p { font-size: 16px; line-height: 1.6; font-weight: 400; }
+h1 { font-size: 2.8em; line-height: 1.1em; color: #132B9B; font-weight: 700; }
+h2 { color: #132B9B; font-size: 2.5em; font-weight: 600; }
+h3 { font-size: 2.2em; color: #132B9B; font-weight: 700; margin-bottom: 20px; line-height: 1.1; }
+h4 { color: #132B9B; font-size: 1.7em; font-weight: 600; margin-bottom: 20px; }
+h5 { color: #132B9B; font-size: 1.4em; font-weight: 600; margin-bottom: 20px; }
+h6 { color: #6f6f6f; font-size: 1.2em; font-weight: 500; margin-bottom: 20px; }
+#topo { background-color: #D4D7E7;}
+.btn-azul { font-family: "Poppins", Sans-serif; font-weight: 500; text-shadow: 0px 0px 10px rgba(0,0,0,0.3); fill: #E4E5F1; color: #E4E5F1; background-color: #111F94; border-radius: 35px 35px 35px 35px; }
+.btn-azul:hover { color: #fff; }
+.contato{ float: right; margin-top: 40px;}
+
+.desempenho { background-color: #eae8e6; padding-top: 50px; padding-bottom: 30px; }
+.desempenho h2 { margin-bottom: 20px; }
+.estatisticas { display: flex; justify-content: center; }
+.estatisticas div { text-align: center; font-size: 19px; padding-left: 10px; padding-right: 20px; }
+.estatisticas div .contador { color: #132B9B; font-size: 69px; font-weight: 500; }
+
+.duvida { padding-top: 50px; padding-bottom: 30px; }
+.duvida h2 { margin-bottom: 20px; }
+.accordion-button { color: #132B9B; font-weight: 500; }
+
+.footer { background-color: #D4D7E7; padding-top: 30px; padding-bottom: 20px; }
+.footer .links { margin-top: 20px; }
+.footer .links a { margin-right: 20px; color: #000; }
+.footer p { margin-bottom: 20px; margin-top: 15px;  }
+
+.sol { text-align: center; }
+.sol h6 { font-size: 16px; font-weight: 300; }
+.bgBtn { margin-bottom: 25px;}
+
+.formAsync .form-input { margin-bottom: 20px; }
+.formAsync .form-input label { width: 100%; display: inline-block; color: #132B9B; }
+.formAsync .form-input label span{ color: #FF0000; }
+.hidden { display: none;}
+
+.btn-whats { position: fixed; bottom: 20px; right: 20px; z-index: 999; }
+
+.pulse-button { position: relative; width: 55px; height: 55px; border: none; background: #34d95a; background-image: -webkit-linear-gradient(top, #34d95a, #22a30f); background-image: -moz-linear-gradient(top, #34d95a, #22a30f); background-image: -ms-linear-gradient(top, #34d95a, #22a30f); background-image: -o-linear-gradient(top, #34d95a, #22a30f); background-image: linear-gradient(to bottom, #34d95a, #22a30f); background-size: cover; background-repeat: no-repeat; cursor: pointer; -webkit-animation: pulse 1.25s infinite cubic-bezier(0.16, 0, 0, 1); -moz-animation: pulse 1.25s infinite cubic-bezier(0.16, 0, 0, 1); -ms-animation: pulse 1.25s infinite cubic-bezier(0.16, 0, 0, 1); animation: pulse 1.25s infinite cubic-bezier(0.16, 0, 0, 1); touch-action: none; width: 80px; height: 80px }
+
+.pulse-button img { width: 40px }
+
+.btn-info { background-color: #132B9B; color: #fff; border-radius: 10px; margin: auto; }
+.logo-form { width: 456px; margin: auto; }
+.seguro { margin-top: 40px; text-align: right;}
+
+#copiaCola{ width: 100%; display: flex; justify-content: center; align-items: center; }
+
+@media (min-width:320px) {
+    .estatisticas { display: initial; }
+    .logo-form { width: calc(100vw - 30px) !important; }
+    .seguro { text-align: center; }
+    #copiaCola { overflow-x: hidden !important; }
+}
+
+@media (min-width:480px) {
+    .estatisticas { display: initial; }
+    .logo-form { width: calc(100vw - 30px) !important; }
+    .seguro { text-align: center; }
+    #copiaCola { overflow-x: hidden !important; }
+}
+
+@media (min-width:641px) { /* portrait tablets, portrait iPad, landscape e-readers, landscape 800x480 or 854x480 phones */
+    .estatisticas { display: flex; }
+}
+
+@media (min-width:961px) { /* tablet, landscape iPad, lo-res laptops ands desktops */
+    .estatisticas { display: flex; }
+}
+
+@media (min-width:1025px) { /* big landscape tablets, laptops, and desktops */
+    .estatisticas { display: flex; }
+}
+
+@media (min-width:1281px) { /* hi-res laptops and desktops */
+    .estatisticas { display: flex; }
+}

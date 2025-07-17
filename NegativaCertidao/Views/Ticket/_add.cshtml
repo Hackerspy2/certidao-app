@@ -1,0 +1,48 @@
+﻿@using Repository.Util
+@using Domain
+@model Ticket
+@using HtmlHelper = Web.Models.HtmlHelper
+<div class="col-12">
+    <div class="card">
+        <div class="card-header" style="font-weight: bold">Dados pessoais</div>
+        <div class="card-body">
+            <div class="row mt-2">
+                @Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "Cpf", Model.Cpf, "CPF", "*", coluns: "2", classe: "mask_cpf"))
+                @Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "Nome", Model.Nome, "Nome completo", "*", "4"))
+                @Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "NomeMae", Model.NomeMae, "Nome da mãe", "", "3"))
+                @Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "NomePai", Model.NomePai, "Nome do pai", "", "3", ""))
+                @Html.Raw(HtmlHelper.MontaInput(InputTypes.Select, "Nacionalidade", Model.Nacionalidade, "Nacionalidade", "*", "2", "ListNacionalidade"))
+                @Html.Raw(HtmlHelper.MontaInput(InputTypes.Select, "EstadoNasceu", Model.EstadoNasceu, "Estado onde nasceu", "*", "2"))
+                @Html.Raw(HtmlHelper.MontaInput(InputTypes.Select, "CidadeNasceu", Model.CidadeNasceu, "Cidade onde nasceu", "*", "3"))
+                @Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "Celular", Model.Celular, "Celular (what'sapp)", "*", "2", "", "mask_celular"))
+                @Html.Raw(HtmlHelper.MontaInput(InputTypes.Email, "Email", Model.Email, "E-mail", "", "3"))
+                @Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "DataNascimento", Model.DataNascimento, "Data nascimento", "*", "2", classe: "mask_data"))
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-12">
+<div class="card">
+<div class="card-header" style="font-weight: bold">Documento</div>
+<div class="card-body">
+<div class="row mt-2">
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "Rg", Model.Rg, "Nº do documento", "", "2"))
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Select, "Emissor", Model.Emissor, "Órgão emissor", "", "2", "ListEmissor"))
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "EmissorOutro", Model.EmissorOutro, "Digite aqui o órgão emissor", "", "2"))
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Select, "EmissorEstado", Model.EmissorEstado, "Estado emissor", "", "2"))
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "Passaporte", Model.Passaporte, "Passaporte", "", "2"))
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Text, "PassaporteSerie", Model.PassaporteSerie, "Série do passaporte", "", "2"))
+</div>
+</div>
+</div>
+</div>
+<div class="clearfix"></div>
+<select id="cidadeO" style="display: none"></select>
+@Html.HiddenFor(a => a.Id)
+@Html.HiddenFor(a => a.DataCadastro)
+@Html.HiddenFor(a => a.UsuarioCadastro)
+@Html.HiddenFor(a => a.DataAlteracao)
+@Html.HiddenFor(a => a.UsuarioAlteracao)
+@Html.HiddenFor(a => a.Status)
+@Html.Hidden("janela", ViewData["janela"])
+@Html.Hidden("tipo",  ViewData["tipo"])

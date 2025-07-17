@@ -1,0 +1,677 @@
+﻿@model Domain.Ticket
+@inject IConfiguration Config
+@{
+    ViewBag.Titulo = $"Emitir certidão - {ViewBag.tipo}";
+    Layout = "~/Views/Shared/_Site.cshtml";
+    var cotroller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var valor = Config.GetSection("ValorSite").Value;
+}
+@section scripts {
+    <script>
+        var copyToClipboard = function(element) {
+            const $temp = $("<input>");
+            $("body").append($temp);
+            $temp.val($(element).val()).select();
+            document.execCommand("copy");
+            $temp.remove();
+            Notifica("Sucesso", "Chave copiada com sucesso!", "success");
+        }
+        var consulta = function() {
+            $.ajax({
+                url: "/Ticket/ConsultaPagamento",
+                type: "GET",
+                data: { txid: $("#TidTransacao").val() },
+                success: function(data) {
+                    $(".preloader").hide();
+                    if (data == "paid" || data == "CONCLUIDA") {
+                        Notifica("Sucesso", "Obrigado pelo pagamento, concluindo sua transação, aguarde por gentileza!", "success");
+                        $("#form_geral").submit();
+                    }
+                }
+            });
+        }
+        $(function() {
+            $("#contato").remove();
+            carregarEstados('#EmissorEstado', '#CidadeEmissaoRG', '', '');
+            carregarEstados('#EstadoNasceu', '#CidadeNasceu', '', '');
+            let tipo = "@Html.Raw(ViewBag.tipo)";
+            if (tipo == "Certidão Negativa Criminal Estatual") {
+                $("#divNomeMae, #divNomePai, #divEstadoNasceu, #divCidadeNasceu, #divNacionalidade, #divRg, #divEmissor, #divEmissorEstado, #divPassaporte, #divPassaporteSerie, #divCND, #divNirf, #divEstadoCivil, #divInstancia, #divLogradouro, #divFiltroAcao, #divRgData, #divFinalidade, #divFinalidadeComplemento, #divProfissao").hide();
+            }
+            if (tipo == "Certidão Negativa Criminal Estadual" || tipo == "Certidão Negativa Cível Estadual") {
+                carregarEstadosRemove('#EstadoEmissao', '#CidadeEmissao', '', '', 'MG,SC,PR');
+            }
+            else {
+                carregarEstados('#EstadoEmissao', '#CidadeEmissao', '', '');
+            }
+            if (tipo == "Certidão Negativa Cível Federal") {
+                $("#divNomeMae, #divNomePai, #divEstadoCivil, #divEstadoNasceu, #divCidadeNasceu, #divEmissor, #divEmissorEstado, #divPassaporte, #divPassaporteSerie, #divCND, #divNirf, #divInstancia, #divLogradouro, #divFiltroAcao, #divRgData, #divFinalidade, #divFinalidadeComplemento, #divProfissao, #divNacionalidade, #divRg").hide();
+            }
+            if (tipo == "Certidão Negativa Criminal Federal") {
+                $("#divNomeMae, #divNomePai, #divEstadoNasceu, #divCidadeNasceu, #divNacionalidade, #divRg, #divEmissor, #divEmissorEstado, #divPassaporte, #divPassaporteSerie, #divCND, #divNirf, #divEstadoCivil, #divInstancia, #divLogradouro, #divFiltroAcao, #divRgData, #divFinalidade, #divFinalidadeComplemento, #divProfissao").hide();
+            }
+            if (tipo == "Certidão CPF Regular") {
+                var $radios = $('input:radio[name=cpfCnpj]');
+                $radios.filter('[value=cpf]').prop('checked', true);
+                $("#divTipoPessoa, #divEstadoEmissao, #divCidadeEmissao, #divSexo, #divNomeMae, #divNomePai, #divEstadoNasceu, #divCidadeNasceu, #divNacionalidade, #divRg, #divEmissor, #divEmissorEstado, #divPassaporte, #divPassaporteSerie, #divCND, #divNirf, #divEstadoCivil, #divInstancia, #divLogradouro, #divFiltroAcao, #divRgData, #divFinalidade, #divFinalidadeComplemento, #divProfissao").hide();
+            }
+            if (tipo == "Certidão Negativa de Débitos - CND") {
+                var $radios = $('input:radio[name=cpfCnpj]');
+                $radios.filter('[value=cpf]').prop('checked', true);
+                $("#divTipoPessoa, #divEstadoEmissao, #divCidadeEmissao, #divSexo, #divNomeMae, #divNomePai, #divEstadoNasceu, #divCidadeNasceu, #divNacionalidade, #divRg, #divEmissor, #divEmissorEstado, #divPassaporte, #divPassaporteSerie, #divCpf, #divDataNascimento, #divNirf, #divEstadoCivil, #divInstancia, #divLogradouro, #divFiltroAcao, #divRgData, #divFinalidade, #divFinalidadeComplemento, #divProfissao").hide();
+            }
+            if (tipo == "Certidão de Quitação Eleitoral") {
+                var $radios = $('input:radio[name=cpfCnpj]');
+                $radios.filter('[value=cpf]').prop('checked', true);
+                $("#divTipoPessoa, #divEstadoNasceu, #divCidadeNasceu, #divNacionalidade, #divRg, #divEmissor, #divEmissorEstado, #divPassaporte, #divPassaporteSerie, #divCND, #divNirf, #divEstadoCivil, #divInstancia, #divLogradouro, #divFiltroAcao, #divRgData, #divFinalidade, #divFinalidadeComplemento, #divProfissao").hide();
+            }
+            if (tipo == "Certidão de Antecedentes Criminais da Polícia Federal") {
+                var $radios = $('input:radio[name=cpfCnpj]');
+                $radios.filter('[value=cpf]').prop('checked', true);
+                $("#divTipoPessoa, #divSexo, #divEstadoEmissao, #divCidadeEmissao, #divCND, #divNirf, #divEstadoCivil, #divInstancia, #divLogradouro, #divFiltroAcao, #divRgData, #divFinalidade, #divFinalidadeComplemento, #divProfissao").hide();
+            }
+
+            $("input[name=cpfCnpj]").change(function() {
+                if ($(this).val() == "cnpj") {
+                    $(".cnpj").show("fade");
+                } else {
+                    $(".cnpj").hide("fade");
+                }
+            });
+            $("#EstadoEmissao").change(function() {
+                $("#divNomeMae, #divNomePai, #divEstadoNasceu, #divCidadeNasceu, #divNacionalidade, #divEmissor, #divInstancia, #divEstadoCivil, #divLogradouro, #divFiltroAcao, #divRgData, #divFinalidade, #divFinalidadeComplemento").hide();
+                if (tipo == "Certidão Negativa Criminal Estadual" || tipo == "Certidão Negativa Cível Estadual") {
+                    $("#divEstadoCivil").show();
+                    switch ($(this).val()) {
+                    case "AC":
+                        $("#divNomeMae, #divNomePai, #divRg").show();
+                        break;
+                    case "AL":
+                        $("#divNomeMae, #divNacionalidade, #divRg").show();
+                        break;
+                    case "AP":
+                        $("#divNomeMae, #divNomePai, #divRg, #divEmissorEstado").show();
+                        break;
+                    case "AM":
+                        $("#divRg, #divNomeMae, #divNomePai, #divNacionalidade, #divEstadoNasceu, #divCidadeNasceu, #divProfissao, #divLogradouro").show();
+                        break;
+                    case "BA":
+                        $("#divNomeMae, #divNomePai, #divEstadoNasceu, #divCidadeNasceu, #divNacionalidade, #divRg, #divEmissor, #divLogradouro").show();
+                        $("#divEstadoNasceu").find("span").text("*");
+                        $("#divCidadeNasceu").find("span").text("*");
+                        break;
+                    case "CE":
+                    case "DF":
+                        $("#divNomeMae, #divNomePai, #divRg").show();
+                        break;
+                    case "GO":
+                    case "RN":
+                        $("#divNomeMae, #divRg, #divLogradouro").show();
+                        break;
+                    case "PR":
+                        $("#divNomeMae, #divRg").show();
+                        break;
+                    case "MS":
+                        $("#divNomeMae, #divNomePai, #divRg").show();
+                        break;
+                    case "MA":
+                        $("#divNomeMae, #divNomePai, #divInstancia").show();
+                        break;
+                    case "MT":
+                        $("#divFiltroAcao, #divRg").show();
+                        break;
+                    case "MG":
+                        $("#divNomePai, #divNomeMae").show();
+                        break;
+                    case "PA":
+                        $("#divNomeMae, #divRg, #divLogradouro").show();
+                        break;
+                    case "SP":
+                        $("#divNomeMae, #divNomePai, #divEstadoNasceu, #divCidadeNasceu, #divRg").show();
+                        break;
+                    case "PB":
+                        $("#divNomeMae, #divRg, #divLogradouro").show();
+                        break;
+                    case "PE":
+                        $("#divNomeMae, #divNacionalidade, #divRg, #divEmissor, #divRgData, #divEmissorEstado, #divLogradouro").show();
+                        break;
+                    case "PI":
+                        $("#divNomeMae, #divNomePai, #divEmissor, #divEmissorEstado, #divLogradouro, #divNacionalidade, #divRg").show();
+                        break;
+                    case "RS":
+                        $("#divNomeMae, #divNomePai, #divEmissor, #divEmissorEstado, #divLogradouro, #divNacionalidade, #divRg").show();
+                        break;
+                    case "RJ":
+                        $("#divNomeMae, #divNomePai, #divFinalidade, #divFinalidadeComplemento").show();
+                        break;
+                    case "SE":
+                        $("#divNomeMae").show();
+                        break;
+                    case "SC":
+                        $("#divFinalidade").show();
+                        break;
+                    default:
+                    }
+                }
+            });
+            $("input[name=tipoCnd]").change(function() {
+                $("#Tipo").val(tipo + " - " + $("input[name=tipoCnd]:checked").val());
+                $("#divCpf, #divCnpj, #divNirf").hide();
+                if ($("input[name=tipoCnd]:checked").val() == "Certidão de Pessoa Física") {
+                    $("#divCpf").show();
+                }
+                if ($("input[name=tipoCnd]:checked").val() == "Certidão de Pessoa Jurídica") {
+                    $("#divCnpj").show();
+                }                
+            });
+            $("input[name='aceite'], input[name='emailCorreto']").click(function() {
+                if ($("input[name='aceite']").is(":checked") && $("input[name='emailCorreto']").is(":checked")) {
+                    $("#proximo").attr("disabled", false);
+                } else {
+                    $("#proximo").attr("disabled", true);
+                }
+            });
+
+
+            $("#proximo").click(function() {
+
+                if (tipo == "Certidão Negativa Criminal Federal" || tipo == "Certidão Negativa Cível Federal") {
+                    if ($("#Nome").val() == "" || $("#Cpf").val() == "" || $("#DataNascimento").val() == "" || $("#Celular").val() == "" || $("#Email").val() == "" || $("#EstadoEmissao").val() == "" || $("#CidadeEmissao").val() == "" || !$("input[name=cpfCnpj]").is(":checked") || !$("input[name=Sexo]").is(":checked")) {
+                        Notifica("Atenção", "Informe todos os campos para avançar", "warning");
+                        return;
+                    }
+                    const date = moment($("#DataNascimento").val(), 'DD/MM/YYYY');
+                    if (!date.isValid()) {
+                        Notifica("Atenção", "Data de nascimento inválida", "warning");
+                        return;
+                    }
+                }
+
+                if (tipo == "Certidão CPF Regular") {
+                    if ($("#Nome").val() == "" || $("#Cpf").val() == "" || $("#DataNascimento").val() == "" || $("#Celular").val() == "" || $("#Email").val() == "") {
+                        Notifica("Atenção", "Informe todos os campos para avançar", "warning");
+                        return;
+                    }
+                    const date = moment($("#DataNascimento").val(), 'DD/MM/YYYY');
+                    if (!date.isValid()) {
+                        Notifica("Atenção", "Data de nascimento inválida", "warning");
+                        return;
+                    }
+                }
+
+                if (tipo == "Certidão de Quitação Eleitoral") {
+                    if ($("#Nome").val() == "" || $("#Cpf").val() == "" || $("#DataNascimento").val() == "" || $("#Celular").val() == "" || $("#Email").val() == "" || $("#EstadoEmissao").val() == "" || $("#CidadeEmissao").val() == "" || !$("input[name=Sexo]").is(":checked")) {
+                        Notifica("Atenção", "Informe todos os campos para avançar", "warning");
+                        return;
+                    }
+                    const date = moment($("#DataNascimento").val(), 'DD/MM/YYYY');
+                    if (!date.isValid()) {
+                        Notifica("Atenção", "Data de nascimento inválida", "warning");
+                        return;
+                    }
+                }
+
+                if (tipo == "Certidão de Antecedentes Criminais da Polícia Federal") {
+                    if ($("#Nome").val() == "" || $("#Cpf").val() == "" || $("#DataNascimento").val() == "" || $("#Celular").val() == "" || $("#Email").val() == "" || $("#EstadoNasceu").val() == "" || $("#CidadeNasceu").val() == "" || $("#Nacionalidade").val() == "" || $("#Rg").val() == "" || $("#EmissorEstado").val() == "" || $("#Emissor").val() == "" || $("#NomeMae").val() == "" || $("#NomePai").val() == "") {
+                        Notifica("Atenção", "Informe todos os campos para avançar", "warning");
+                        return;
+                    }
+                    if ($("#Emissor").val() == "OUTROS" && $("#EmissorOutro").val() == "") {
+                        Notifica("Atenção", "Informe o orgão emissor", "warning");
+                        return;
+                    }
+                }
+
+                if (tipo == "Certidão Negativa de Débitos - CND") {
+                    if ($("#Nome").val() == "" || $("#Celular").val() == "" || $("#Email").val() == "" || !$("input[name=tipoCnd]").is(":checked")) {
+                        Notifica("Atenção", "Informe todos os campos para avançar", "warning");
+                        return;
+                    }
+                }
+
+                if (tipo == "Certidão Negativa Criminal Estadual" || tipo == "Certidão Negativa Cível Estadual") {
+                    if ($("#DataNascimento").val() == "" || $("#EstadoCivil").val() == "") {
+                        Notifica("Atenção", "Informe todos os campos para avançar", "warning");
+                        return;
+                    }                   
+                    switch ($("#EstadoEmissao").val()) {
+                    case "AL":
+                        if ($("#NomeMae").val() == "" || $("#Nacionalidade").val() == "" || $("#Rg").val() == "") {
+                            Notifica("Atenção", "Informe todos os campos para avançar", "warning");
+                            return;
+                        }
+                        break;
+                    case "AP":
+                        if ($("#NomeMae").val() == "" || $("#Rg").val() == "" || $("#EmissorEstado").val() == "") {
+                            Notifica("Atenção", "Informe todos os campos para avançar", "warning");
+                            return;
+                        }
+                        break;
+                    case "BA":
+                        if ($("#Emissor").val() == "" || $("#Nacionalidade").val() == "" || $("#NomeMae").val() == "" || $("#Logradouro").val() == "" || $("#EstadoNasceu").val() == "" || $("#CidadeNasceu").val() == "" || $("#Rg").val() == "") {
+                            Notifica("Atenção", "Informe todos os campos para avançar", "warning");
+                            return;
+                        }
+                    case "CE":
+                    case "DF":
+                        if ($("#NomeMae").val() == "" || $("#nomePai").val() == "" || $("#Rg").val() == "") {
+                            Notifica("Atenção", "Informe todos os campos para avançar", "warning");
+                            return;
+                        }
+                        break;
+                    case "GO":
+                    case "RN":
+                        if ($("#NomeMae").val() == "" || $("#Logradouro").val() == "" || $("#Rg").val() == "") {
+                            Notifica("Atenção", "Informe todos os campos para avançar", "warning");
+                            return;
+                        }
+                        break;
+                    case "PR":
+                        if ($("#NomeMae").val() == "" || $("#Rg").val() == "") {
+                            Notifica("Atenção", "Informe todos os campos para avançar", "warning");
+                            return;
+                        }
+                        break;
+                    case "MS":
+                        if ($("#Rg").val() == "" || $("#NomeMae").val() == "" || $("#NomePai").val() == "") {
+                            Notifica("Atenção", "Informe todos os campos para avançar", "warning");
+                            return;
+                        }
+                        break;
+                    case "MA":
+                        if ($("#NomeMae").val() == "" || $("#NomePai").val() == "" || $("#Instancia").val() == "") {
+                            Notifica("Atenção", "Informe todos os campos para avançar", "warning");
+                            return;
+                        }
+                        break;
+                    case "MT":
+                        if ($("#FiltroAcao").val() == "" || $("#Rg").val() == "") {
+                            Notifica("Atenção", "Informe todos os campos para avançar", "warning");
+                            return;
+                        }
+                        break;
+                    case "PA":
+                        if ($("#NomeMae").val() == "" || $("#Rg").val() == "" || $("#Logradouro").val() == "") {
+                            Notifica("Atenção", "Informe todos os campos para avançar", "warning");
+                            return;
+                        }
+                        break;
+                    case "SP":
+                        if ($("#NomeMae").val() == "" || $("#Rg").val() == "") {
+                            Notifica("Atenção", "Informe todos os campos para avançar", "warning");
+                            return;
+                        }
+                        break;
+                    case "PB":
+                        if ($("#NomeMae").val() == "" || $("#Rg").val() == "" || $("#Logradouro").val() == "") {
+                            Notifica("Atenção", "Informe todos os campos para avançar", "warning");
+                            return;
+                        }
+                        break;
+                    case "PE":
+                        if ($("#Rg").val() == "" || $("#NomeMae").val() == "" || $("#Emissor").val() == "" || $("#RgData").val() == "" || $("#EmissorEstado").val() == "" || $("#Nacionalidade").val() == "" || $("#Logradouro").val() == "") {
+                            Notifica("Atenção", "Informe todos os campos para avançar", "warning");
+                            return;
+                        }
+                        break;
+                    case "PI":
+                        if ($("#NomeMae").val() == "" || $("#NomePai").val() == "" || $("#Emissor").val() == "" || $("#EmissorEstado").val() == "" || $("#Logradouro").val() == "" || $("#Rg").val() == "") {
+                            Notifica("Atenção", "Informe todos os campos para avançar", "warning");
+                            return;
+                        }
+                        break;
+                    case "RS":
+                        if ($("#NomeMae").val() == "" || $("#NomePai").val() == "" || $("#Emissor").val() == "" || $("#EmissorEstado").val() == "" || $("#Logradouro").val() == "" || $("#Rg").val() == "") {
+                            Notifica("Atenção", "Informe todos os campos para avançar", "warning");
+                            return;
+                        }
+                        break;
+                    case "RJ":
+                        if ($("#NomeMae").val() == "" || $("#NomePai").val() == "" || $("#Finalidade").val() == "") {
+                            Notifica("Atenção", "Informe todos os campos para avançar", "warning");
+                            return;
+                        }
+                        break;
+                    case "SC":
+                        if ($("#Finalidade").val() == "") {
+                            Notifica("Atenção", "Informe todos os campos para avançar", "warning");
+                            return;
+                        }
+                        break;
+                  case "":
+                        Notifica("Atenção", "Informe todos os campos para avançar", "warning");
+                        return;
+                    break;
+                    }
+                }
+
+                if (!validaCpf($("#Cpf").val())) {
+                    Notifica("Atenção", "CPF inválido", "warning");
+                    return;
+                }
+
+                if ($("input[name=cpfCnpj]:checked").val() == "cnpj") {
+                    if ($("#Cnpj").val() == "" || $("#RazaoSocial").val() == "") {
+                        Notifica("Atenção", "Informe todos os campos para avançar", "warning");
+                        return;
+                    }
+
+                    if (!validaCnpj($("#Cnpj").val())) {
+                        Notifica("Atenção", "CNPJ inválido", "warning");
+                        return;
+                    }
+                }
+
+
+                if ($("#Celular").val().replace("_", "").replace("_", "").length != 14) {
+                    Notifica("Atenção", "Telefone inválido", "warning");
+                    return;
+                }
+
+                if (!validarEmail($("#Email").val())) {
+                    Notifica("Atenção", "E-mail inválido", "warning");
+                    return;
+                }
+
+                $(".preloader").show();
+                $.ajax({
+                    url: "/Ticket/GeraQrCode",
+                    type: "GET",
+                    data: { cpf: $("#Cpf").val(), nome: $("#Nome").val(), telefone: $("#Celular").val(), email: $("#Email").val() },
+                    success: function(data) {
+                        $(".preloader").hide();
+                        if (data.cssClass == "success") {
+
+                            $("#TidTransacao").val(data.txid);
+                            $("#PixCopiaCola").val(data.chave);
+                            $("#proximo").hide();
+                            setInterval(consulta, 15000);
+
+                            var formData = new FormData($("form[name='nome_do_form']")[0]);
+                            $.ajax({
+                                url: "/Ticket/SalvarTemp",
+                                type: "POST",
+                                cache: false,
+                                contentType: false,
+                                processData: false,
+                                dataType: "json",
+                                data: formData,
+                                success: function(retorno) {
+                                    if (retorno.cssClass == "success") {
+                                        $("#form").hide("fade");
+                                        $("#pix").html(`<img src='/images/pag-pix.png' style='width: 140px' /><br><img src='data:image/png;base64, ${data.imagem}' style='width: 300px; height: 300px' /><p>Serviço: Emissão de Certidão – R$ @valor</p>
+                                            <p style='width: 400px; margin: auto'>Copie o código  abaixo e utilize a opção PIX Copia e Cola no aplicativo que você vai fazer o pagamento.</p><input type="text" name="copiaCola" id="copiaCola" value="${data.chave}" readonly="" style="justify-content: center;background-color: #D4D7E7;color: #212121; padding: 20px;box-sizing: border-box;border-radius: 10px;margin: 15px 0; border: none"><br><button type='button' onclick="copyToClipboard('#copiaCola')" class='btn btn-sm btn-info'>Copiar chave</button>`).show("fade");
+                                        $("h3, h6").addClass("text-center");
+                                    } else {
+                                        Notifica("Atenção", "Erro ao processar sua requisição, recarrege a tela e tente novamente!", "warning");
+                                    }
+                                },
+                                error: function() {
+                                    Notifica("Atenção", "Erro ao processar sua requisição, recarrege a tela e tente novamente!", "warning");
+                                }
+                            });
+                        } else {
+                            Notifica("Atenção", data.mensagem, "warning");
+                        }
+                    }
+                });
+
+            });
+
+            $("#form_geral").on("submit",
+                function(e) {
+                    e.preventDefault();
+                    var form = $(this);
+
+                    window.parent.$(".preloader").show();
+                    const formData = new FormData(this);
+                    $.ajax({
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        type: "POST",
+                        dataType: "json",
+                        url: form.attr("action"),
+                        data: formData,
+                        success: function(ret) {
+                            window.parent.$(".preloader").hide();
+                            if (ret.cssClass === "success") {
+                                //Notifica(getTitle(ret.cssClass), ret.mensagem, ret.cssClass, ret.funcao);
+                                window.location.href = "/sucesso";
+                            } else {
+                                Notifica(getTitle(ret.cssClass), ret.mensagem, ret.cssClass, ret.funcao);
+                            }
+                        },
+                        error: function(error) {
+                            $(".preloader").hide();
+                            Notifica("Atenção", "Ocorreu um de comunicação do app com o servidor da aplicação", "warning");
+                        }
+                    });
+                });
+            $("#Emissor").change(function() {
+                if ($(this).val() == "OUTROS") {
+                    $("#divEmissorOutro").show();
+                } else {
+                    $("#divEmissorOutro").hide();
+                }
+            });
+            if ("Certidão Negativa Criminal,Certidão Negativa Cível".split(',').includes(tipo)) {
+                $('#EstadoEmissao option[value="MG"]').remove();
+                $('#EstadoEmissao option[value="SC"]').remove();
+            }
+        });
+    </script>
+}
+<div id="topo">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <a href="/" style="margin: auto;">
+                    <img src="/images/logo.png" class="img-fluid" />
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container mb-5 mt-5">
+    <p>&nbsp;</p>
+    <h3>@ViewBag.tipo</h3>
+    <p>&nbsp;</p>
+    <h6 class="mb-5">Solicitação de Emissão de Certidão</h6>
+
+    <form asp-action="Salvar" asp-controller="@cotroller" method="post" enctype="multipart/form-data" role="form" class="floating-labels formAsync" name="nome_do_form" id="form_geral" novalidate="">
+        <div class="row mt-3" id="form">
+
+
+            <div class="col-12 form-input" id="divTipoPessoa">
+                <label>Certidão para Pessoa ou Empresa <span>*</span></label>
+                <input type="radio" name="cpfCnpj" value="cpf" /> CPF (Pessoa Física) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="radio" name="cpfCnpj" value="cnpj" /> CNPJ (Empresa)
+            </div>
+            <div class="col-12 form-input" id="divCND">
+                <label>Tipo de Certidão <span>*</span></label>
+                <input type="radio" name="tipoCnd" value="Certidão de Pessoa Física" /> Certidão de Pessoa Física<br />
+                <input type="radio" name="tipoCnd" value="Certidão de Pessoa Jurídica" /> Certidão de Pessoa Jurídica<br />
+            </div>
+            <div class="col-12 form-input">
+                <label>Nome completo do solicitante <span>*</span></label>
+                <input type="text" name="Nome" id="Nome" class="form-control" />
+            </div>
+            <div class="col-md-6 col-12 form-input" id="divCpf">
+                <label>CPF do solicitante <span>*</span></label>
+                <input type="text" name="Cpf" id="Cpf" class="form-control mask_cpf" />
+            </div>
+            <div class="col-md-6 col-12 form-input" id="divNirf">
+                <label>NIRF/CIB <span></span></label>
+                <input type="text" name="Nirf" id="Nirf" class="form-control" />
+            </div>
+            <div class="col-md-6 col-12 form-input" id="divDataNascimento">
+                <label>Data de nascimento <span>*</span></label>
+                <input type="text" name="DataNascimento" id="DataNascimento" class="form-control mask_data" />
+            </div>
+            <div class="col-12 form-input" id="divSexo">
+                <label>Gênero <span>*</span></label>
+                <input type="radio" name="Sexo" value="Masculino" /> Masculino &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="radio" name="Sexo" value="Feminino" /> Feminino
+            </div>
+            <div class="col-md-4 col-12 form-input cnpj hidden" id="divCnpj">
+                <label>CNPJ <span>*</span></label>
+                <input type="text" name="Cnpj" id="Cnpj" class="form-control mask_cnpj" />
+            </div>
+            <div class="col-md-8 col-12 form-input cnpj hidden">
+                <label>Razão social <span>*</span></label>
+                <input type="email" name="RazaoSocial" id="RazaoSocial" class="form-control" />
+            </div>
+            <div class="col-md-6 col-12 form-input" id="divEstadoEmissao">
+                <label>Estado onde a certidão será emitida <span>*</span></label>
+                <select id="EstadoEmissao" name="EstadoEmissao" class="form-control"></select>
+            </div>
+            <div class="col-md-6 col-12 form-input" id="divCidadeEmissao">
+                <label>Cidade onde a certidão será emitida <span>*</span></label>
+                <select id="CidadeEmissao" name="CidadeEmissao" class="form-control"></select>
+            </div>
+            <div class="col-md-6 col-12 form-input" id="divNomeMae">
+                <label>Nome completo da mãe <span>*</span></label>
+                <input type="text" name="NomeMae" id="NomeMae" class="form-control" />
+            </div>
+            <div class="col-md-6 col-12 form-input" id="divNomePai">
+                <label>Nome completo do pai <span>*</span></label>
+                <input type="text" name="NomePai" id="NomePai" class="form-control" />
+            </div>
+            <div class="col-md-6 col-12 form-input" id="divEstadoNasceu">
+                <label>Estado onde nasceu <span></span></label>
+                <select id="EstadoNasceu" name="EstadoNasceu" class="form-control"></select>
+            </div>
+            <div class="col-md-6 col-12 form-input" id="divCidadeNasceu">
+                <label>Cidade onde nasceu <span></span></label>
+                <select id="CidadeNasceu" name="CidadeNasceu" class="form-control"></select>
+            </div>
+            <div class="col-md-6 col-12 form-input" id="divNacionalidade">
+                <label>Nacionalidade <span>*</span></label>
+                <select id="Nacionalidade" name="Nacionalidade" class="form-control">
+                    <option></option>
+                    <option>Brasileiro Nato (nascido aqui)</option>
+                    <option>Brasileiro Naturalizado (de outro país)</option>
+                </select>
+            </div>
+            <div class="col-md-6 col-12 form-input" id="divInstancia">
+                <label>Instância <span>*</span></label>
+                <select id="Instancia" name="Instancia" class="form-control">
+                    <option></option>
+                    <option>Primeiro Grau</option>
+                    <option>Segundo Grau</option>
+                </select>
+            </div>
+            <div class="col-md-6 col-12 form-input" id="divFiltroAcao">
+                <label>Filtros por tipo de ação <span>*</span></label>
+                <select id="FiltroAcao" name="FiltroAcao" class="form-control">
+                    <option></option>
+                    <option>Execução Penal</option>
+                    <option>Crime Militar da Justiça Comum</option>
+                    <option>Ações Penais com respeito ao crime contra o Patrimônio e contra a Administração Pública</option>
+                </select>
+            </div>
+            <div class="col-md-6 col-12 form-input" id="divEstadoCivil">
+                <label>Estado civil <span>*</span></label>
+                <select id="EstadoCivil" name="EstadoCivil" class="form-control">
+                    <option></option>
+                    <option>Solteiro(a)</option>
+                    <option>Casado(a)</option>
+                    <option>Divorciado(a)</option>
+                    <option>Viúvo(a)</option>
+                    <option>Separado(a)</option>
+                    <option>Amasiado (a)</option>
+                    <option>União Estável</option>
+                </select>
+            </div>
+            <div class="col-md-6 col-12 form-input" id="divRg">
+                <label>Documento de Identificação (RG) <span>*</span></label>
+                <input type="text" name="Rg" id="Rg" class="form-control" />
+            </div>
+            <div class="col-md-6 col-12 form-input" id="divRgData">
+                <label>Data de emissão (RG) <span>*</span></label>
+                <input type="text" name="RgData" id="RgData" class="form-control mask_data" />
+            </div>
+            <div class="col-md-6 col-12 form-input" id="divEmissor">
+                <label>Órgão Emissor do RG <span>*</span></label>
+                <select id="Emissor" name="Emissor" class="form-control">
+                    <option></option>
+                    <option>SSP</option>
+                    <option>DETRAN</option>
+                    <option>IFP</option>
+                    <option>DIC</option>
+                    <option>IGP</option>
+                    <option>IMESP</option>
+                    <option>IPF</option>
+                    <option>OUTROS</option>
+                </select>
+            </div>
+            <div class="col-md-6 col-12 form-input" id="divEmissorOutro" style="display: none">
+                <label>Digite aqui o órgão emissor <span></span></label>
+                <input type="text" name="EmissorOutro" id="EmissorOutro" class="form-control" />
+            </div>
+            <div class="col-md-6 col-12 form-input" id="divEmissorEstado">
+                <label>Estado Emissor do RG <span>*</span></label>
+                <select id="EmissorEstado" name="EmissorEstado" class="form-control"></select>
+                <select id="CidadeEmissaoRG" class="form-control" style="display: none"></select>
+            </div>
+            <div class="col-md-6 col-12 form-input" id="divLogradouro">
+                <label>Endereço completo com CEP<span>*</span></label>
+                <input type="text" name="Logradouro" id="Logradouro" class="form-control" />
+            </div>
+
+            <div class="col-md-6 col-12 form-input" id="divPassaporte">
+                <label>Número do Passaporte (se houver) <span></span></label>
+                <input type="text" name="Passaporte" id="Passaporte" class="form-control" />
+            </div>
+            <div class="col-md-6 col-12 form-input" id="divPassaporteSerie">
+                <label>Série do Passaporte (se houver) <span></span></label>
+                <input type="text" name="PassaporteSerie" id="PassaporteSerie" class="form-control" />
+            </div>
+            <div class="col-12 form-input" id="divFinalidade">
+                <label>Finalidade da Certidão <span>*</span></label>
+                <select name="Finalidade" id="Finalidade" class="form-control"><option value=""></option><option value="Adoção ">Adoção</option><option value="Alteração Contratual">Alteração Contratual</option><option value="Apresentação à Polícia Civil">Apresentação à Polícia Civil</option><option value="Apresentação à Polícia Civil para Apresentação em Concurso">Apresentação à Polícia Civil para Apresentação em Concurso</option><option value="Apresentação à Polícia Civil para Apresentação em Processo">Apresentação à Polícia Civil para Apresentação em Processo</option><option value="Apresentação à Polícia Federal">Apresentação à Polícia Federal</option><option value="Apresentação à Polícia Federal para Apresentação em Concurso">Apresentação à Polícia Federal para Apresentação em Concurso</option><option value="Apresentação à Polícia Federal para Apresentação em Processo">Apresentação à Polícia Federal para Apresentação em Processo</option><option value="Apresentação à Receita Federal">Apresentação à Receita Federal</option><option value="Arma de Fogo (Aquisição de Arma de Fogo)">Arma de Fogo (Aquisição de Arma de Fogo)</option><option value="Arma de Fogo (Certificado de Registro)">Arma de Fogo (Certificado de Registro)</option><option value="Arma de Fogo (Porte de Arma Primeiro Emprego)">Arma de Fogo (Porte de Arma Primeiro Emprego)</option><option value="Arma de Fogo (Porte de Arma Renovação de Ata)">Arma de Fogo (Porte de Arma Renovação de Ata)</option><option value="Arma de Fogo (Posse de Arma Primeiro Emprego)">Arma de Fogo (Posse de Arma Primeiro Emprego)</option><option value="Arma de Fogo (Posse de Arma Renovação de Ata)">Arma de Fogo (Posse de Arma Renovação de Ata)</option><option value="Ata/Reciclagem de Vigilantes">Ata/Reciclagem de Vigilantes</option><option value="Blindagem de Veículo ">Blindagem de Veículo</option><option value="Clube (Criminal)">Clube (Criminal)</option><option value="Concurso (Criminal)">Concurso (Criminal)</option><option value="Conselho Tutelar">Conselho Tutelar</option><option value="Emprego (policiais)">Emprego (policiais)</option><option value="Emprego em outras empresas">Emprego em outras empresas</option><option value="Fins Eleitorais">Fins Eleitorais</option><option value="Instrução de Processo Judicial (Criminal)">Instrução de Processo Judicial (Criminal)</option><option value="Inventário e Partilha (Ação Criminal)">Inventário e Partilha (Ação Criminal)</option><option value="Licitação">Licitação</option><option value="Mandado Judicial">Mandado Judicial</option><option value="Memorial de Incorporação">Memorial de Incorporação</option><option value="Ministério da Justiça">Ministério da Justiça</option><option value="Ministério da Justiça (Defesa de Processo Mediante Despacho de Juiz">Ministério da Justiça (Defesa de Processo Mediante Despacho de Juiz</option><option value="Ministério do Exército (Concurso)">Ministério do Exército (Concurso)</option><option value="Motorista (Aplicativo de Mobilidade Urbana)">Motorista (Aplicativo de Mobilidade Urbana)</option><option value="Motorista (Mototaxi)">Motorista (Mototaxi)</option><option value="Motorista (Táxi)">Motorista (Táxi)</option><option value="Motorista (Transporte Alternativo)">Motorista (Transporte Alternativo)</option><option value="Motorista (Transporte escolar)">Motorista (Transporte escolar)</option><option value="Perito Judiial (Criminal)">Perito Judiial (Criminal)</option><option value="Renovação de Emprego">Renovação de Emprego</option><option value="Réu Preso">Réu Preso</option><option value="SMTR">SMTR</option><option value="Visita a hospital - caráter religioso (Criminal)">Visita a hospital - caráter religioso (Criminal)</option><option value="Visita a presídio - família e caráter religioso (Criminal)">Visita a presídio - família e caráter religioso (Criminal)</option></select>
+
+            </div>
+            <div class="col-12 form-input" id="divFinalidadeComplemento">
+                <label>Complemento Finalidade <span>*</span></label>
+                <textarea type="text" name="FinalidadeComplemento" id="FinalidadeComplemento" class="form-control"></textarea>
+            </div>
+            <div class="col-md-4 col-12 form-input">
+                <label>Telefone (WhatsApp) <span>*</span></label>
+                <input type="text" name="Celular" id="Celular" class="form-control mask_celular" />
+            </div>
+            <div class="col-md-4 col-12 form-input" id="divProfissao">
+                <label>Profissão <span></span></label>
+                <input type="text" name="Profissao" id="Profissao" class="form-control" />
+            </div>
+            <div class="col-md-8 col-12 form-input">
+                <label>Email <span>*</span></label>
+                <input type="email" name="Email" id="Email" class="form-control" />
+            </div>
+            <div style="color: #FF0000">Os campos com * são obrigatórios.</div>
+            <p>
+                <input type="checkbox" name="emailCorreto" />
+                Confirmo que o e-mail acima está correto
+            </p>
+            <p>
+                <input type="checkbox" name="aceite" />
+                Li e estou de acordo com os <a href="/Termos-de-Uso.pdf" target="_blank">Termos de Uso</a> e <a href="/Politica-de-Privacidade.pdf" target="_blank">Política de Privacidade</a>
+            </p>
+            <div class="col-md-12 text-center">
+                <button id="proximo" type="button" class="btn btn-info waves-effect waves-light m-t-10" disabled="disabled">Próximo</button>
+                <input id="continua" name="continua" type="hidden" value="" />
+            </div>
+            <p>&nbsp;</p>
+        </div>
+        <div id="pix" class="text-center"></div>
+        @Html.HiddenFor(a => a.Tipo)
+        @Html.HiddenFor(a => a.Status)
+        @Html.HiddenFor(a => a.StatusTransacao)
+        @Html.HiddenFor(a => a.TidTransacao)
+        @Html.HiddenFor(a => a.PixQrCode)
+        @Html.HiddenFor(a => a.PixCopiaCola)
+        @Html.HiddenFor(a => a.Valor)
+        @Html.Hidden("rediret", "#detalhes")
+    </form>
+</div>

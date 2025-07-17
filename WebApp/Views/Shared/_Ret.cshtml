@@ -1,0 +1,24 @@
+﻿@if (ViewBag.Retorno != null)
+{
+    var ret = ViewBag.Retorno as string[];
+    if (ret != null)
+    {
+        <script type="text/javascript">
+            function getTitle(valor) {
+                switch (valor) {
+                    case "success":
+                        return "Sucesso!";
+                    case "info":
+                        return "Atenção!";
+                    case "error":
+                        return "Erro!";
+                    default:
+                        return "Atenção!";
+                }
+            }
+            //success, info, warning, error
+            window.parent.NotificaClose(getTitle("@ret[0]"), "@Html.Raw(ret[1])", "@ret[0]");
+            setInterval(function () { window.parent.location.reload(); }, 3000);
+        </script>
+    }
+}

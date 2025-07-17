@@ -1,0 +1,15 @@
+﻿@using HtmlHelper = WebApp.Models.HtmlHelper
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var controller = ViewContext.RouteData.Values["controller"]!.ToString()!;
+    const string titulo = "Usuários";
+}
+@section scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            jDataTableAll("#dynamicTableDesc", "/@controller/List/", "@controller", 0, "", "", "");
+        });
+    </script>
+}
+@Html.Raw(HtmlHelper.MontaHtml(titulo, controller, "Add", "cadastrar", "Nome|E-mail|CPF|Celular|Perfil|Status", "+ adicionar"))

@@ -1,0 +1,35 @@
+name: Deploy .NET 8 App to Azure
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET 8
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Clean publish folder
+      run: |
+        rm -rf ./publish
+        mkdir ./publish
+
+    - name: Build and publish
+      run: |
+        dotnet restore ./Web/Web.csproj
+        dotnet build ./Web/Web.csproj -c Release --no-restore
+        dotnet publish ./Web/Web.csproj -c Release -o ./publish
+
+    - name: Deploy to Azure
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'sqlbrasilescrtvirt' # Substitua pelo nome do seu App Service
+        publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+        package: ./publish

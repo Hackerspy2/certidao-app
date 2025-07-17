@@ -1,0 +1,88 @@
+﻿@model Domain.Pessoa
+@{
+    ViewBag.Title = "AlterarFoto";
+    Layout = "~/Views/Shared/_Modal.cshtml";
+    var controller = ViewBag.Controller as string;
+}
+@section styles
+{
+    <link href="/admin/libs/crop/cropper.css" rel="stylesheet" />
+}
+@section scripts
+{
+    <script src="/admin/libs/crop/cropper.js"></script>
+    <script src="/admin/js/alterarFoto.js"></script>
+    @{ Html.RenderPartial("_Ret");}
+}
+    <div class="animated fadeIn">
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item"> <a class="nav-link active" data-toggle="tab" href="#enviarFoto" role="tab"><span class="hidden-sm-up"><i class="ti-home"></i></span> <span class="hidden-xs-down">Enviar foto</span></a> </li>
+        </ul>
+        <div class="tab-content tabcontent-border">
+            <div class="tab-pane active" id="enviarFoto">
+                <div class="p-20">
+
+                    
+                        <form asp-action="AlterarFoto" method="post" enctype="multipart/form-data" role="form" class="floating-labels" id="form_geral" novalidate="">
+                            <div class="textoInicial">
+                                <p>Para alterar sua foto, clique no botão abaixo.</p>
+                                <div class="btn-group">
+                                    <label title="Selecione uma imagem" for="inputImage" class="btn btn-success">
+                                        <input type="file" accept="image/png, image/jpeg" name="file" id="inputImage" class="hide">
+                                        <i class="mdi mdi-upload"></i> Selecionar foto
+                                    </label>
+                                    @if (!string.IsNullOrWhiteSpace(Model.Foto))
+                                    {
+                                        <a href="javascript:;" class="btn btn-danger" id="removerFoto">Remover foto <i class="mdi mdi-close-circle"></i></a>
+                                    }
+                                </div>
+                            </div>
+                            <p>&nbsp;</p>
+                            <div class="fotoAtual row">
+                                <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
+                                    @if (!string.IsNullOrWhiteSpace(Model.Foto))
+                                    {
+                                        <img src="/images/pessoa/@Model.Foto" class="img-fluid img-rounded" />
+                                    }
+                                    else
+                                    {
+                                        <img src="/images/pessoa/semfoto.jpg" class="img-fluid img-rounded" />
+                                    }
+                                    
+                                </div>
+                            </div>
+                            <div class="enviarFoto" style="display: none">
+                                <p>
+                                    <strong><i class="fa fa-info-circle" aria-hidden="true"></i> DICA</strong><br />
+                                    Arraste o quadrado sobre a foto abaixo posicionando no lugar desejado e veja ao lado como ficará a foto.<br />
+                                    Após definida a posição, clique no botão <strong><i class="fa fa-cloud-upload"></i> salvar foto</strong>.
+                                </p>
+                                <div class="form-group">
+                                    <label></label>
+                                    <button class="btn btn-success" type="submit"><i class="mdi mdi-check-circle"></i> Salvar Foto</button>
+                                    <a href="javascript:;" class="btn btn-danger bt-cancela"><i class="mdi mdi-close-circle"></i> cancelar</a>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6 col-sm-6 col-md-6 col-xs-12">
+                                        <div class="image-crop">
+                                            <img src="">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-sm-6 col-md-6 col-xs-12">
+                                        <h4>Como vai ficar:</h4>
+                                        <div class="img-preview img-preview-sm"></div>
+                                    </div>
+                                </div>
+                                <div class="hr-line-dashed"></div>
+                                <input type="hidden" name="imgX" id="imgX" value="" />
+                                <input type="hidden" name="imgY" id="imgY" value="" />
+                                <input type="hidden" name="imgW" id="imgW" value="" />
+                                <input type="hidden" name="imgH" id="imgH" value="" />
+                            </div>
+
+                        </form>
+                    </div>
+            </div>
+        </div>
+
+    </div>

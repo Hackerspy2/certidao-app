@@ -1,0 +1,722 @@
+﻿@model Domain.Ticket
+@inject IConfiguration Config
+@{
+    ViewBag.Titulo = $"Emitir certidão - {ViewData["tipo"]}";
+    Layout = "~/Views/Shared/_Site.cshtml";
+    var cotroller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var valor = Config.GetSection("ValorSite").Value;
+    string tipo = ViewData["tipo"].ToString();
+    var disabled = "disabled=disabled";
+}
+@section scripts {
+    <script src="~/v2/js/validacao.js"></script>
+    <script>
+        var copyToClipboard = function () {
+            const $temp = $("<input>");
+            $("body").append($temp);
+            $temp.val($("#copiaCola").html()).select();
+            document.execCommand("copy");
+            $temp.remove();
+            Notifica("Sucesso", "Chave copiada com sucesso!", "success");
+        }
+        var consulta = function () {
+            $.ajax({
+                url: "/Ticket/ConsultaPagamento",
+                type: "GET",
+                data: { txid: $("#TidTransacaoTemp").val() },
+                success: function (data) {
+                    $(".preloader").hide();
+                    if (data == "paid") {
+                        window.location.href = "/sucesso";
+                    }
+                }
+            });
+        }
+        var carregaCarrinho = function () {
+            var solicitacoes = JSON.parse(sessionStorage.getItem("solicitacoes"));
+            if (solicitacoes != null) {
+                var tableBody = $('#produtos');
+                tableBody.empty();
+                let soma = parseFloat(0);
+                solicitacoes.forEach(function (solicitacao) {
+                    var row = $('<tr>');
+                    row.append($('<td>').html(`${solicitacao.Tipo} ${(solicitacao.SubTipo != undefined ? solicitacao.SubTipo : "")} x 1<br>Nome completo do solicitante: ${solicitacao.Nome}<br>CPF  do solicitante: ${solicitacao.Cpf}`));
+                    row.append($('<td>').html(`R$ ${solicitacao.Valor}<br><a href='javascript:;' dados='${solicitacao.codigo}' class='removeCertidao btn btn-sm btn-danger' style='font-size: 8pt;color: #FFF'>Remover</a>`));
+
+                    tableBody.append(row);
+                    soma += parseFloat(solicitacao.Valor.toString().replace(",", "."));
+                });
+                $("#total").html("R$ " + soma.toFixed(2).toString().replace(".", ","));
+                $("#Valor").val(soma.toFixed(2).toString().replace(".", ","));
+                if (soma == 0) { window.location.href = "/"; };
+            }
+        }
+        $(function () {
+            let tipo = "@Html.Raw(tipo)";
+            carregarEstados('#EstadoEmissao', '#CidadeEmissao', '', '', function() {
+                if ("Certidão Negativa Criminal,Certidão Negativa Cível".split(',').includes(tipo)) {
+                    $('#EstadoEmissao option[value="MG"],#EstadoEmissao option[value="SC"],#EstadoEmissao option[value="PR"]').remove();
+                }
+            });
+            carregarEstados('#EmissorEstado', '#CidadeEmissaoRG', '', '');
+            carregarEstados('#EstadoNasceu', '#CidadeNasceu', '', '');
+            $("input[name='emailCorreto']").click(function () {
+                if ($("input[name='emailCorreto']").is(":checked")) {
+                    $("#pagar").attr("disabled", false);
+                } else {
+                    $("#pagar").attr("disabled", true);
+                }
+            });
+            $(document).delegate(".removeCertidao", "click", function () {
+                var solicitacoes = JSON.parse(sessionStorage.getItem("solicitacoes"));
+                var dados = $(this).attr("dados");
+                solicitacoes = solicitacoes.filter(function (solicitacao) {
+                    return solicitacao.codigo !== dados;
+                });
+                sessionStorage.setItem("solicitacoes", JSON.stringify(solicitacoes));
+                carregaCarrinho();
+            });
+            $(document).delegate("#copiarChave", "click", function () {
+                copyToClipboard();
+            });
+            
+            $("#pagar").click(function () {
+                var isValid = true;
+                $(':input:visible').each(function () {
+                    var type = $(this).prop('type');
+                    if ((type === 'text' || type === 'radio' || type === 'select-one') && $(this).val() === '') {
+                        isValid = false;
+                        return false;
+                    }
+                    return true;
+                });
+
+                if (isValid) {
+                    $(".preloader").show();
+                    $.ajax({
+                        url: "/Ticket/GeraQrCode",
+                        type: "GET",
+                        data: { cpf: $("#Cpf").val(), nome: $("#Nome").val(), telefone: $("#Celular").val(), email: $("#Email").val(), valor: $("#Valor").val(), idPagador: $("#IdPagador").val(), senha: $("#Senha").val() },
+                        success: function (data) {
+                            $(".preloader").hide();
+                            if (data.cssClass == "success") {
+
+                                $("#TidTransacaoTemp").val(data.txid);
+                                $("#PixCopiaColaTemp").val(data.chave);
+
+                                setInterval(consulta, 15000);
+
+                                var solicitacoes = JSON.parse(sessionStorage.getItem("solicitacoes"));
+                                if (solicitacoes != null) {
+                                    $.ajax({
+                                        url: `/Ticket/SalvarListTemp/?idPagador=${data.idPagador}&valor=${$("#Valor").val()}&pixCopiaCola=${data.chave}&txid=${data.txid}`,
+                                        type: "POST",
+                                        contentType: "application/json",
+                                        data: JSON.stringify(solicitacoes),
+                                        success: function (retorno) {
+
+                                            $($("#seletor div")[3]).find("svg").html('<path fill-rule="evenodd" d="M15.663 3.78A9 9 0 1 0 21 12.004v-.92a1 1 0 1 1 2 0v.92A11.002 11.002 0 0 1 8.188 22.319a11 11 0 1 1 8.289-20.366 1 1 0 1 1-.814 1.827Zm7.044-.487a1 1 0 0 1 0 1.414l-10 10.01a1 1 0 0 1-1.414 0l-3-3a1 1 0 1 1 1.414-1.414L12 12.595l9.293-9.302a1 1 0 0 1 1.414 0Z" clip-rule="evenodd"></path>');
+                                            $($("#seletor div")[3]).addClass("foi");
+                                            $($("#seletor div")[6]).addClass("ativo");
+                                            $("#certidoes").hide("fade");
+                                            $(".qrCode").html(`<img src='data:image/png;base64, ${data.imagem}' style='width: 230px; height: 230px' />`);
+                                            $("#copiaCola").html(data.chave);
+
+
+                                            var tableBody = $('#resulPprodutos');
+                                            tableBody.empty();
+                                            let soma = parseFloat(0);
+                                            solicitacoes.forEach(function (solicitacao) {
+                                                var row = $('<tr>');
+                                                row.append($('<td>').html(`${solicitacao.Tipo} ${(solicitacao.SubTipo != undefined ? solicitacao.SubTipo : "")} x 1<br>Nome completo do solicitante: ${solicitacao.Nome}<br>CPF  do solicitante: ${solicitacao.Cpf}`));
+                                                row.append($('<td>').html(`R$ ${solicitacao.Valor}`));
+
+                                                tableBody.append(row);
+                                                soma += parseFloat(solicitacao.Valor.toString().replace(",", "."));
+                                            });
+                                            var row = $('<tr>');
+                                            row.append($('<td>').html("Total "));
+                                            row.append($('<td>').html("R$ " + soma.toFixed(2).toString().replace(".", ",")));
+                                            var row1 = $('<tr>');
+                                            row1.append($('<td colspan="2">').html("Email para recebimento: " + $("#Email").val()));
+                                            tableBody.append(row);
+                                            tableBody.append(row1);
+                                            $("#resultValor").html("<buttom id='copiarChave' class='btn btn-info' style='float: right;margin-right: 11px;'>Copiar chave copia e cola</buttom> R$ " + soma.toFixed(2).toString().replace(".", ","));
+                                            $("#pix").show();
+                                            sessionStorage.setItem("solicitacoes", JSON.stringify([]));
+
+                                        },
+                                        error: function () {
+                                            Notifica("Atenção", "Erro ao processar sua requisição, recarrege a tela e tente novamente!", "warning");
+                                        }
+                                    });
+                                }
+
+
+                            } else {
+                                Notifica("Atenção", data.mensagem, "warning");
+                            }
+                        }
+                    });
+                } else {
+                    Notifica("Atenção", "Por favor, preencha todos os campos para avançar", "warning");
+                }
+            });
+            $("#passo1").click(function () {
+                var solicitacoes = JSON.parse(sessionStorage.getItem("solicitacoes"));
+                if (solicitacoes == null) {
+                    solicitacoes = [];
+                    sessionStorage.setItem("solicitacoes", JSON.stringify(solicitacoes));
+                }
+                let btn = $(this);
+                var isValid = true;
+                $(':input:visible').each(function () {
+                    var type = $(this).prop('type');
+                    if ((type === 'text' || type === 'radio' || type === 'select-one') && $(this).val() === '') {
+                        isValid = false;
+                        return false;
+                    }
+                    return true;
+                });
+
+                if (isValid) {
+                    var formValues = {};
+                    $(':input:visible').each(function () {
+                        var type = $(this).prop('type');
+                        if (type === 'text' || type === 'select-one') {
+                            var name = $(this).attr('name');
+                            formValues[name] = $(this).val();
+                        } else if (type === 'radio') {
+                            var name = $(this).attr('name');
+                            formValues[name] = $('input[name="' + name + '"]:checked').val();
+                        }
+
+                    });
+                    formValues["Tipo"] = $("#Tipo").val();
+                    formValues["Valor"] = $("#Valor").val();
+                    formValues["codigo"] = generateGUID();
+                    solicitacoes.push(formValues);
+                    sessionStorage.setItem("solicitacoes", JSON.stringify(solicitacoes));
+                    $("#formulario, .total").hide();
+                    $("#pagador, .form-input").show();
+                    $("#divSenha").hide();
+                    btn.hide();
+                    $("#resultAdd span").html(`<svg xmlns="http://www.w3.org/2000/svg" style="color: #8fae1b" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M15.663 3.78A9 9 0 1 0 21 12.004v-.92a1 1 0 1 1 2 0v.92A11.002 11.002 0 0 1 8.188 22.319a11 11 0 1 1 8.289-20.366 1 1 0 1 1-.814 1.827Zm7.044-.487a1 1 0 0 1 0 1.414l-10 10.01a1 1 0 0 1-1.414 0l-3-3a1 1 0 1 1 1.414-1.414L12 12.595l9.293-9.302a1 1 0 0 1 1.414 0Z" clip-rule="evenodd"></path></svg> &nbsp; "${formValues["Tipo"]}" foi adicionado ao seu carrinho.`);
+                    carregaCarrinho();
+                } else {
+                    Notifica("Atenção", "Por favor, preencha todos os campos para avançar", "warning");
+                }
+            });
+            $("#Email").blur(function (e) {
+                $.ajax({
+                    url: "/Ticket/GetPagador",
+                    type: "GET",
+                    data: { email: $("#Email").val() },
+                    success: function (data) {
+                        if (data != null) {
+                            Notifica("Que ótimo", "Você já possui uma conta conosco, basta informar sua senha e finalizar seu pedido", "warning");
+                            $("#divSenha").show();
+                            $("#Senha").val("");
+                            $("#divCpfPagador, #divNomePagador, #divCelularPagador").hide();
+                            $("#Celular").val(data.telefone);
+                            $("#Nome").val(data.nome);
+                            $("#IdPagador").val(data.id);
+                        }
+                    }
+                });
+            });
+
+            $($("#seletor div")[0]).addClass("foi");
+            $($("#seletor div")[3]).addClass("ativo");
+
+            $(".form-input").hide();
+            var showCivelCrinimal = function () {
+                if ($("input[name=cpfCnpj]:checked").val() == "cnpj") {
+                    $(".cnpj").show();
+                } else {
+                    $(".cnpj").hide();
+                }
+                if ("Certidão Negativa Criminal,Certidão Negativa Cível".split(',').includes(tipo)) {
+                    $("#divEstadoEmissao").show();
+                    if ($("input[name=SubTipo]:checked").val() != "Federal") {
+                        $("#divDataNascimento, #divNomeMae").show();
+                    } else {
+                        $("#divDataNascimento, #divNomeMae").hide();
+                    }
+                }
+            }
+            $("#divTipoPessoa, #divNomeCompleto, #divCpf").show();
+            $("input[name=SubTipo], input[name=cpfCnpj]").change(function () {
+                showCivelCrinimal();
+                if ($(this).attr("name") == "SubTipo") {
+                    let valor = "@valor";
+                    if ($(this).val() == "Estadual + Federal") {
+                        $(".total span").html("R$ " + parseFloat(valor) * 2);
+                        $("#Valor").val((parseFloat(valor) * 2).toFixed(2).toString().replace(".", ","));
+                    } else {
+                        $(".total span").html("R$ " + parseFloat(valor));
+                        $("#Valor").val((parseFloat(valor)).toFixed(2).toString().replace(".", ","));
+                    }
+                }
+            });
+            if ("Certidão Negativa Criminal,Certidão Negativa Cível".split(',').includes(tipo)) {
+                $("#divSubTipo").show();
+                $("#divDataNascimento").hide();
+                $('#EstadoEmissao option[value="MG"]').remove();
+            }
+            if (tipo == "Certidão de Quitação Eleitoral") {
+                $("#divTipoPessoa").hide();
+                $("#divEstadoEmissao").show();
+                //$("#divNomeMae, #divNomePai").show();
+            }
+            if (tipo == "Certidão de Antecedentes Criminais da Polícia Federal") {
+                $("#divTipoPessoa").hide();
+                $("#divNomeMae, #divPais, #divEstadoNasceu, #divNacionalidade").show();
+            }
+            $("#EstadoNasceu").change(function () {
+                $("#divCidadeNasceu").show();
+                $("#divNomePai").hide();
+                if (tipo == "Certidão de Antecedentes Criminais da Polícia Federal" && $(this).val() == "DF") {
+                    $("#divCidadeNasceu").hide();
+                }
+                if (tipo == "Certidão de Antecedentes Criminais da Polícia Federal" && "AC,AP,AM,BA,CE,MA,MS,PI,RJ,RS,SP,DF".split(',').includes($(this).val())) {
+                    $("#divNomePai").show();
+                }
+            });
+            $("#EstadoEmissao").change(function () {
+                $("#divSexo, #divNomePai, #divEstadoCivil, #divNacionalidade, #divRg, #divEmissor, #divDataNascimento, #divNomeMae, #divEmissorEstado, #divNacionalidade, #divLogradouro, #divInstancia, #divFiltroAcao, #divRgData, #divFinalidade, #divFinalidadeComplemento").hide();
+                if ("Certidão Negativa Criminal,Certidão Negativa Cível".split(',').includes(tipo) && $("input[name=cpfCnpj]:checked").val() == "cpf" && $("input[name=SubTipo]:checked").val() != "Federal") {
+                    if ($(this).val() == "DF") $("#divCidadeEmissao").hide();
+                    if ($(this).val() == "AC") $("#divDataNascimento, #divSexo, #divNomePai").show();
+                    if ($(this).val() == "AL") $("#divDataNascimento, #divSexo, #divEstadoCivil, #divNacionalidade").show();
+                    if ($(this).val() == "AM") $("#divDataNascimento, #divSexo, #divNomeMae").show();
+                    if ($(this).val() == "AP") $("#divDataNascimento, #divRg, #divEmissor, #divNomeMae, #divNomePai").show();
+                    if ($(this).val() == "BA") $("#divDataNascimento, #divRg, #divEmissor, #divEmissorEstado, #divEstadoCivil, #divNomeMae, #divNomePai, #divNacionalidade, #divLogradouro").show();
+                    if ("CE,DF".split(",").includes($(this).val())) $("#divDataNascimento, #divNomeMae, #divNomePai").show();
+                    if ("ES,GO,RO,RR,SE,TO".split(",").includes($(this).val())) $("#divDataNascimento, #divNomeMae").show();
+                    if ($(this).val() == "MA") $("#divDataNascimento, #divNomeMae, #divNomePai, #divInstancia").show();
+                    if ($(this).val() == "MT") $("#divDataNascimento, #divFiltroAcao, #divNomeMae").show();
+                    if ($(this).val() == "MS") $("#divDataNascimento, #divRg, #divEmissorEstado, #divNomeMae, #divNomePai").show();
+                    if ($(this).val() == "PA") $("#divDataNascimento, #divRg, #divEmissorEstado, #divNomeMae, #divLogradouro").show();
+                    if ($(this).val() == "PB") $("#divDataNascimento, #divRg, #divEmissorEstado, #divEstadoCivil, #divNomeMae, #divLogradouro").show();
+                    if ($(this).val() == "PR") $("#divDataNascimento, #divRg, #divEmissorEstado, #divNomeMae").show();
+                    if ($(this).val() == "PE") $("#divDataNascimento, #divRg, #divEmissorEstado, #divEmissor, #divRgData, #divEstadoCivil, #divNomeMae, #divNacionalidade, #divLogradouro").show();
+                    if ($(this).val() == "PI") $("#divDataNascimento, #divRg, #divEmissorEstado, #divEmissor, #divRgData, #divEstadoCivil, #divNomeMae, #divNomePai, #divNacionalidade, #divLogradouro").show();
+                    if ($(this).val() == "RJ") $("#divDataNascimento, #divNomeMae, #divNomePai, #divFinalidade, #divFinalidadeComplemento").show();
+                    if ($(this).val() == "RN") $("#divDataNascimento, #divRg, #divEmissorEstado, #divNomeMae, #divLogradouro").show();
+                    if ($(this).val() == "RS") $("#divDataNascimento, #divSexo, #divRg, #divEmissorEstado, #divEmissor, #divNomeMae, #divNomePai, #divNacionalidade, #divLogradouro").show();
+                    if ($(this).val() == "SC") $("#divDataNascimento, #divNomeMae, #divFinalidade").show();
+                    if ($(this).val() == "SP") $("#divDataNascimento, #divSexo, #divRg, #divEmissorEstado, #divNomeMae, #divNomePai").show();
+                }
+            });
+            $("#Nome").blur(function () {
+                $("#NomePagador").val($(this).val());
+            });
+            $("#Cpf").blur(function () {
+                $("#CpfPagador").val($(this).val());
+            });
+        });
+    </script>
+}
+<div class="linha-topo">
+    <h2 class="text-center">Encontre a certidão que precisa, de um jeito fácil e sem filas.</h2>
+</div>
+<div id="topo">
+    <div class="container">
+        <div class="row">
+            <div class="col-6">
+                <a href="/">
+                    <img src="~/v2/images/logo-topo.svg" class="logo" />
+                </a>
+            </div>
+            <div class="col-6 text-right">
+                <a asp-action="Acompanhar" class="btn btn-primary acompanhar"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 4a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7ZM6.5 7.5a5.5 5.5 0 1 1 11 0 5.5 5.5 0 0 1-11 0Zm2.826 7h5.348c1.227 0 2.065 0 2.777.215a5 5 0 0 1 3.334 3.334c.216.712.215 1.55.215 2.777V21a1 1 0 0 1-2 0c0-1.468-.01-1.98-.13-2.37a3 3 0 0 0-2-2c-.39-.12-.902-.13-2.37-.13h-5c-1.468 0-1.98.01-2.37.13a3 3 0 0 0-2 2c-.12.39-.13.902-.13 2.37a1 1 0 1 1-2 0v-.174c0-1.227 0-2.065.215-2.777a5 5 0 0 1 3.334-3.334c.712-.216 1.55-.216 2.777-.215Z" clip-rule="evenodd"></path></svg> Acompanhar Emissão</a>
+                <nav class="navbar navbar-expand-lg bg-body-tertiary">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item"><a class="nav-link" aria-current="page" href="/"> Emitir Certidão </a></li>
+                            <li class="nav-item"><a class="nav-link ancora" href="/#sobre"> Sobre Nós </a></li>
+                            <li class="nav-item"><a class="nav-link" asp-action="FaleConosco"> Contato </a></li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div id="seletor">
+        <div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M15.663 3.78A9 9 0 1 0 21 12.004v-.92a1 1 0 1 1 2 0v.92A11.002 11.002 0 0 1 8.188 22.319a11 11 0 1 1 8.289-20.366 1 1 0 1 1-.814 1.827Zm7.044-.487a1 1 0 0 1 0 1.414l-10 10.01a1 1 0 0 1-1.414 0l-3-3a1 1 0 1 1 1.414-1.414L12 12.595l9.293-9.302a1 1 0 0 1 1.414 0Z" clip-rule="evenodd"></path></svg>
+            <div class="titulo">
+                Selecionar Certidão
+            </div>
+        </div>
+        <div class="divider">
+            <span>....</span>
+        </div>
+        <div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M10 4a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7ZM4.5 7.5a5.5 5.5 0 1 1 11 0 5.5 5.5 0 0 1-11 0Zm13.543 2.543a2.768 2.768 0 1 1 3.914 3.914L15.5 20.414l-.022.023a2.752 2.752 0 0 1-.318.285 1.99 1.99 0 0 1-.35.205 2.71 2.71 0 0 1-.403.14l-.031.008-3.101.887a1 1 0 0 1-1.237-1.237l.886-3.101.01-.03a2.64 2.64 0 0 1 .139-.405 1.97 1.97 0 0 1 .205-.349c.092-.125.2-.232.285-.318l.023-.022 6.457-6.457Zm2.5 1.414c-.3-.3-.786-.3-1.086 0L13 17.914a5.977 5.977 0 0 0-.107.109l-.002.001v.002c-.01.029-.02.068-.043.147l-.392 1.371 1.37-.392c.08-.022.12-.034.148-.043h.002l.001-.002c.022-.02.05-.049.109-.107l6.457-6.457c.3-.3.3-.786 0-1.086ZM7.326 14.5H9a1 1 0 1 1 0 2H7.5c-1.468 0-1.98.01-2.37.13a3 3 0 0 0-2 2c-.12.39-.13.902-.13 2.37a1 1 0 1 1-2 0v-.174c0-1.227 0-2.065.215-2.777a5 5 0 0 1 3.334-3.334c.712-.216 1.55-.216 2.777-.215Z" clip-rule="evenodd"></path></svg>
+            <div class="titulo">
+                Dados Pessoais
+            </div>
+        </div>
+        <div class="divider">
+            <span>....</span>
+        </div>
+        <div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M2.771 9.527a3.502 3.502 0 0 0 0 4.945l6.757 6.757a3.501 3.501 0 0 0 4.944 0l6.757-6.757a3.502 3.502 0 0 0 0-4.944l-6.757-6.757A3.486 3.486 0 0 0 12 1.75c-.895 0-1.79.34-2.472 1.021L2.771 9.527ZM9.04 7.72a2.652 2.652 0 0 0-1.84-.78l3.25-3.25a2.186 2.186 0 0 1 3.103 0l3.25 3.25a2.66 2.66 0 0 0-1.842.777l-.073.073-2.639 2.64a.346.346 0 0 1-.497 0L9.039 7.719Zm-1.876.523c.346 0 .678.133.927.369l.029.028 2.712 2.712a1.66 1.66 0 0 0 2.337 0l2.712-2.712c.254-.254.598-.397.957-.397h1.265l2.206 2.206a2.19 2.19 0 0 1 0 3.104l-2.205 2.205h-1.266c-.359 0-.703-.142-.957-.396l-2.712-2.712A1.647 1.647 0 0 0 12 12.168c-.422 0-.847.16-1.17.48l-2.71 2.714-.028.028a1.35 1.35 0 0 1-.928.368H5.898l-2.206-2.206a2.188 2.188 0 0 1 0-3.103l2.205-2.206h1.266Zm7.797 8.04a2.66 2.66 0 0 0 1.842.777l-3.25 3.25c-.86.86-2.243.86-3.103 0L7.2 17.06a2.652 2.652 0 0 0 1.84-.778l2.712-2.712a.349.349 0 0 1 .497 0l2.639 2.639.073.074Z"></path></svg>
+            <div class="titulo">
+                Pagamento
+            </div>
+        </div>
+        <div class="divider">
+            <span>....</span>
+        </div>
+        <div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M8.759 1h6.482c.805 0 1.47 0 2.01.044.563.046 1.08.145 1.565.392a4 4 0 0 1 1.748 1.748c.247.485.346 1.002.392 1.564C21 5.29 21 5.954 21 6.758V12.5a1 1 0 1 1-2 0V6.8c0-.857 0-1.439-.038-1.889-.035-.438-.1-.663-.18-.819a2 2 0 0 0-.874-.874c-.156-.08-.38-.145-.819-.18C16.639 3 16.057 3 15.2 3H8.8c-.857 0-1.439 0-1.889.038-.438.035-.663.1-.819.18a2 2 0 0 0-.874.874c-.08.156-.145.38-.18.819C5 5.361 5 5.943 5 6.8v10.4c0 .857 0 1.439.038 1.889.035.438.1.663.18.819a2 2 0 0 0 .874.874c.156.08.38.145.819.18C7.361 21 7.943 21 8.8 21h3.7a1 1 0 1 1 0 2H8.759c-.805 0-1.47 0-2.01-.044-.563-.046-1.08-.145-1.565-.392a4 4 0 0 1-1.748-1.748c-.247-.485-.346-1.002-.392-1.564C3 18.71 3 18.046 3 17.242V6.758c0-.805 0-1.47.044-2.01.046-.563.145-1.08.392-1.565a4 4 0 0 1 1.748-1.748c.485-.247 1.002-.346 1.564-.392C7.29 1 7.954 1 8.758 1ZM7 7a1 1 0 0 1 1-1h8a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Zm0 4a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Zm0 4a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Zm11 0a1 1 0 0 1 1 1v3.586l1.293-1.293a1 1 0 0 1 1.414 1.414l-3 3a1 1 0 0 1-1.414 0l-3-3a1 1 0 0 1 1.414-1.414L17 19.586V16a1 1 0 0 1 1-1Z" clip-rule="evenodd"></path></svg>
+            <div class="titulo">
+                Baixar Certidão Digital
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="container">
+    <div id="certidoes" class="solicitacao">
+        <p style="margin-bottom: 10px;"><a href="javascript:history.go(-1)" style="color: #05A5FB"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M10.1 5.4a.75.75 0 0 1 0 1.06L4.56 12l5.54 5.54a.75.75 0 0 1-1.06 1.06l-6.07-6.07a.75.75 0 0 1 0-1.06L9.04 5.4a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd"></path><path fill-rule="evenodd" d="M2.92 12a.75.75 0 0 1 .75-.75H20.5a.75.75 0 0 1 0 1.5H3.67a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd"></path></svg> Voltar e selecionar outra certidão</a></p>
+        <h3>@tipo</h3>
+        <p>&nbsp;</p>
+        <form asp-action="Salvar" asp-controller="@cotroller" method="post" enctype="multipart/form-data" role="form" class="floating-labels formAsync" name="nome_do_form" id="form_geral" novalidate="">
+            <div id="form">
+                <div id="formulario" class="row mt-3">
+                    <div class="col-12 form-input" id="divSubTipo">
+                        <label>Tipo de Certidão <span>*</span></label><br />
+                        <div><input type="radio" name="SubTipo" value="Estadual" /> Estadual &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                        <div><input type="radio" name="SubTipo" value="Federal" /> Federal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                        <div><input type="radio" name="SubTipo" value="Estadual + Federal" /> Estadual + Federal (+R$ @valor)</div>
+                    </div>
+
+                    <div class="col-12 form-input" id="divTipoPessoa">
+                        <label>Pessoa física ou jurídica <span>*</span></label><br />
+                        <div><input type="radio" name="cpfCnpj" value="cpf" /> Certidão de Pessoa Física &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                        <div> <input type="radio" name="cpfCnpj" value="cnpj" /> Certidão de Pessoa Jurídica</div>
+                    </div>
+                    <div class="col-12 form-input" id="divCND">
+
+                        <label>Finalidade de Certidão <span>*</span></label><br />
+                        <div><input type="radio" name="tipoCnd" value="Certidão de Pessoa Física" /> Certidão de Pessoa Física &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                        <div><input type="radio" name="tipoCnd" value="Certidão de Pessoa Jurídica" /> Certidão de Pessoa Jurídica &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                    </div>
+                    <div class="col-md-6 col-12 form-input" id="divNomeCompleto">
+                        <label>Nome completo do solicitante <span>*</span></label>
+                        <input type="text" name="Nome" id="Nome" class="form-control" />
+                    </div>
+                    <div class="col-md-6 col-12 form-input" id="divCpf">
+                        <label>CPF do solicitante <span>*</span></label>
+                        <input type="text" name="Cpf" id="Cpf" class="form-control mask_cpf" />
+                    </div>
+                    <div class="col-md-4 col-12 form-input cnpj hidden" id="divCnpj">
+                        <label>CNPJ <span>*</span></label>
+                        <input type="text" name="Cnpj" id="Cnpj" class="form-control mask_cnpj" />
+                    </div>
+                    <div class="col-md-8 col-12 form-input cnpj hidden">
+                        <label>Razão social <span>*</span></label>
+                        <input type="text" name="RazaoSocial" id="RazaoSocial" class="form-control" />
+                    </div>
+                    <div class="col-md-6 col-12 form-input" id="divEstadoEmissao">
+                        <label>Estado onde a certidão será emitida <span>*</span></label>
+                        <select id="EstadoEmissao" name="EstadoEmissao" class="form-control"></select>
+                    </div>
+                    <div class="col-md-6 col-12 form-input" id="divCidadeEmissao">
+                        <label>Cidade onde a certidão será emitida <span>*</span></label>
+                        <select id="CidadeEmissao" name="CidadeEmissao" class="form-control"></select>
+                    </div>
+                    <div class="col-md-6 col-12 form-input" id="divDataNascimento">
+                        <label>Data de nascimento <span>*</span></label>
+                        <input type="text" name="DataNascimento" id="DataNascimento" class="form-control mask_data" />
+                    </div>
+                    <div class="col-md-6 col-12 form-input" id="divNirf">
+                        <label>NIRF/CIB <span></span></label>
+                        <input type="text" name="Nirf" id="Nirf" class="form-control" />
+                    </div>
+                    <div class="col-md-6 col-12 form-input" id="divSexo">
+                        <label>Gênero <span>*</span></label><br />
+                        <input type="radio" name="Sexo" value="Masculino" /> Masculino &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="radio" name="Sexo" value="Feminino" /> Feminino
+                    </div>
+                    <div class="col-md-6 col-12 form-input" id="divNacionalidade">
+                        <label>Nacionalidade <span>*</span></label>
+                        <select id="Nacionalidade" name="Nacionalidade" class="form-control">
+                            <option></option>
+                            <option>Brasileiro Nato (nascido aqui)</option>
+                            <option>Brasileiro Naturalizado (de outro país)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 col-12 form-input" id="divPais">
+                        <label>País de nascimento <span>*</span></label>
+                        <input type="text" name="Pais" id="Pais" class="form-control" />
+                    </div>
+                    <div class="col-md-6 col-12 form-input" id="divEstadoNasceu">
+                        <label>Estado de nascimento <span>*</span></label>
+                        <select id="EstadoNasceu" name="EstadoNasceu" class="form-control"></select>
+                    </div>
+                    <div class="col-md-6 col-12 form-input" id="divCidadeNasceu">
+                        <label>Cidade de nascimento <span>*</span></label>
+                        <select id="CidadeNasceu" name="CidadeNasceu" class="form-control"></select>
+                    </div>
+                    <div class="col-md-6 col-12 form-input" id="divNomeMae">
+                        <label>Nome completo da mãe <span>*</span></label>
+                        <input type="text" name="NomeMae" id="NomeMae" class="form-control" />
+                    </div>
+                    <div class="col-md-6 col-12 form-input" id="divNomePai">
+                        <label>Nome completo do pai <span>*</span></label>
+                        <input type="text" name="NomePai" id="NomePai" class="form-control" />
+                    </div>
+                    <div class="col-md-6 col-12 form-input" id="divInstancia">
+                        <label>Instância <span>*</span></label>
+                        <select id="Instancia" name="Instancia" class="form-control">
+                            <option></option>
+                            <option>Primeiro Grau</option>
+                            <option>Segundo Grau</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 col-12 form-input" id="divFiltroAcao">
+                        <label>Filtros por tipo de ação <span>*</span></label>
+                        <select id="FiltroAcao" name="FiltroAcao" class="form-control">
+                            <option></option>
+                            <option>Execução Penal</option>
+                            <option>Crime Militar da Justiça Comum</option>
+                            <option>Ações Penais com respeito ao crime contra o Patrimônio e contra a Administração Pública</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 col-12 form-input" id="divEstadoCivil">
+                        <label>Estado civil <span>*</span></label>
+                        <select id="EstadoCivil" name="EstadoCivil" class="form-control">
+                            <option></option>
+                            <option>Solteiro(a)</option>
+                            <option>Casado(a)</option>
+                            <option>Divorciado(a)</option>
+                            <option>Viúvo(a)</option>
+                            <option>Separado(a)</option>
+                            <option>Amasiado (a)</option>
+                            <option>União Estável</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 col-12 form-input" id="divRg">
+                        <label>Documento de Identificação (RG) <span>*</span></label>
+                        <input type="text" name="Rg" id="Rg" class="form-control" />
+                    </div>
+                    <div class="col-md-6 col-12 form-input" id="divRgData">
+                        <label>Data de emissão (RG) <span>*</span></label>
+                        <input type="text" name="RgData" id="RgData" class="form-control mask_data" />
+                    </div>
+                    <div class="col-md-6 col-12 form-input" id="divEmissor">
+                        <label>Órgão Emissor do RG <span>*</span></label>
+                        <select id="Emissor" name="Emissor" class="form-control">
+                            <option></option>
+                            <option>SSP</option>
+                            <option>DETRAN</option>
+                            <option>IFP</option>
+                            <option>DIC</option>
+                            <option>IGP</option>
+                            <option>IMESP</option>
+                            <option>IPF</option>
+                            <option>OUTROS</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 col-12 form-input" id="divEmissorOutro" style="display: none">
+                        <label>Digite aqui o órgão emissor <span></span></label>
+                        <input type="text" name="EmissorOutro" id="EmissorOutro" class="form-control" />
+                    </div>
+                    <div class="col-md-6 col-12 form-input" id="divEmissorEstado">
+                        <label>Estado Emissor do RG <span>*</span></label>
+                        <select id="EmissorEstado" name="EmissorEstado" class="form-control"></select>
+                        <select id="CidadeEmissaoRG" class="form-control" style="display: none"></select>
+                    </div>
+                    <div class="col-md-6 col-12 form-input" id="divLogradouro">
+                        <label>Endereço completo com CEP<span>*</span></label>
+                        <input type="text" name="Logradouro" id="Logradouro" class="form-control" />
+                    </div>
+
+                    <div class="col-md-6 col-12 form-input" id="divPassaporte">
+                        <label>Número do Passaporte (se houver) <span></span></label>
+                        <input type="text" name="Passaporte" id="Passaporte" class="form-control" />
+                    </div>
+                    <div class="col-md-6 col-12 form-input" id="divPassaporteSerie">
+                        <label>Série do Passaporte (se houver) <span></span></label>
+                        <input type="text" name="PassaporteSerie" id="PassaporteSerie" class="form-control" />
+                    </div>
+                    <div class="col-12 form-input" id="divFinalidade">
+                        <label>Finalidade da Certidão <span>*</span></label>
+                        <select name="Finalidade" id="Finalidade" class="form-control"><option value=""></option><option value="Adoção ">Adoção</option><option value="Alteração Contratual">Alteração Contratual</option><option value="Apresentação à Polícia Civil">Apresentação à Polícia Civil</option><option value="Apresentação à Polícia Civil para Apresentação em Concurso">Apresentação à Polícia Civil para Apresentação em Concurso</option><option value="Apresentação à Polícia Civil para Apresentação em Processo">Apresentação à Polícia Civil para Apresentação em Processo</option><option value="Apresentação à Polícia Federal">Apresentação à Polícia Federal</option><option value="Apresentação à Polícia Federal para Apresentação em Concurso">Apresentação à Polícia Federal para Apresentação em Concurso</option><option value="Apresentação à Polícia Federal para Apresentação em Processo">Apresentação à Polícia Federal para Apresentação em Processo</option><option value="Apresentação à Receita Federal">Apresentação à Receita Federal</option><option value="Arma de Fogo (Aquisição de Arma de Fogo)">Arma de Fogo (Aquisição de Arma de Fogo)</option><option value="Arma de Fogo (Certificado de Registro)">Arma de Fogo (Certificado de Registro)</option><option value="Arma de Fogo (Porte de Arma Primeiro Emprego)">Arma de Fogo (Porte de Arma Primeiro Emprego)</option><option value="Arma de Fogo (Porte de Arma Renovação de Ata)">Arma de Fogo (Porte de Arma Renovação de Ata)</option><option value="Arma de Fogo (Posse de Arma Primeiro Emprego)">Arma de Fogo (Posse de Arma Primeiro Emprego)</option><option value="Arma de Fogo (Posse de Arma Renovação de Ata)">Arma de Fogo (Posse de Arma Renovação de Ata)</option><option value="Ata/Reciclagem de Vigilantes">Ata/Reciclagem de Vigilantes</option><option value="Blindagem de Veículo ">Blindagem de Veículo</option><option value="Clube (Criminal)">Clube (Criminal)</option><option value="Concurso (Criminal)">Concurso (Criminal)</option><option value="Conselho Tutelar">Conselho Tutelar</option><option value="Emprego (policiais)">Emprego (policiais)</option><option value="Emprego em outras empresas">Emprego em outras empresas</option><option value="Fins Eleitorais">Fins Eleitorais</option><option value="Instrução de Processo Judicial (Criminal)">Instrução de Processo Judicial (Criminal)</option><option value="Inventário e Partilha (Ação Criminal)">Inventário e Partilha (Ação Criminal)</option><option value="Licitação">Licitação</option><option value="Mandado Judicial">Mandado Judicial</option><option value="Memorial de Incorporação">Memorial de Incorporação</option><option value="Ministério da Justiça">Ministério da Justiça</option><option value="Ministério da Justiça (Defesa de Processo Mediante Despacho de Juiz">Ministério da Justiça (Defesa de Processo Mediante Despacho de Juiz</option><option value="Ministério do Exército (Concurso)">Ministério do Exército (Concurso)</option><option value="Motorista (Aplicativo de Mobilidade Urbana)">Motorista (Aplicativo de Mobilidade Urbana)</option><option value="Motorista (Mototaxi)">Motorista (Mototaxi)</option><option value="Motorista (Táxi)">Motorista (Táxi)</option><option value="Motorista (Transporte Alternativo)">Motorista (Transporte Alternativo)</option><option value="Motorista (Transporte escolar)">Motorista (Transporte escolar)</option><option value="Perito Judiial (Criminal)">Perito Judiial (Criminal)</option><option value="Renovação de Emprego">Renovação de Emprego</option><option value="Réu Preso">Réu Preso</option><option value="SMTR">SMTR</option><option value="Visita a hospital - caráter religioso (Criminal)">Visita a hospital - caráter religioso (Criminal)</option><option value="Visita a presídio - família e caráter religioso (Criminal)">Visita a presídio - família e caráter religioso (Criminal)</option></select>
+
+                    </div>
+                    <div class="col-12 form-input" id="divFinalidadeComplemento">
+                        <label>Complemento Finalidade <span>*</span></label>
+                        <textarea type="text" name="FinalidadeComplemento" id="FinalidadeComplemento" class="form-control"></textarea>
+                    </div>
+                    <div class="col-md-4 col-12 form-input" id="divProfissao">
+                        <label>Profissão <span></span></label>
+                        <input type="text" name="Profissao" id="Profissao" class="form-control" />
+                    </div>
+                </div>
+                <div id="pagador" class="row mt-3" style="display: none">
+                    <div class="col-12" id="resultAdd" style="border-top: 2px solid #8fae1b; padding: 1em 2em 1em 3.5em; background-color: #f6f5f8; margin: 0 0 2em;">
+                        <span></span>
+                        <a href="/" class="btn btn-primary" style="float: right; color: #FFF;">Adicionar outra certidão</a>
+                    </div>
+                    <div class="col-md-6 col-12">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            disabled = "";
+                            <p>
+                                Olá, <strong>@User.Identity.Name</strong>!<br />
+                                Finalize seu pedido ao lado!
+                                <input type="hidden" id="IdPagador" value="@(Base.GetDadosUsuario<string>(User, "IdUsuario"))" />
+                                <input type="hidden" id="CpfPagador" value="@(Base.GetDadosUsuario<string>(User, "Cpf"))" />
+                                <input type="hidden" id="Celular" value="@(Base.GetDadosUsuario<string>(User, "Celular"))" />
+                                <input type="hidden" id="NomePagador" value="@(Base.GetDadosUsuario<string>(User, "NomeUsuario"))" />
+                                <input type="hidden" id="Email" value="@(Base.GetDadosUsuario<string>(User, "Email"))" />
+                            </p>
+                        }
+                        else
+                        {
+                            <input type="hidden" id="IdPagador" value="0" />
+                            <div class="row">
+                                <div class="col-md-8 col-12 form-input">
+                                    <label>Email para recebimento<span>*</span></label>
+                                    <input type="email" name="Email" id="Email" class="form-control" />
+                                </div>
+                                <div class="col-md-4 col-12 form-input" id="divCpfPagador">
+                                    <label>CPF do pagador <span>*</span></label>
+                                    <input type="text" name="CpfPagador" id="CpfPagador" class="form-control mask_cpf" />
+                                </div>
+                                <div class="col-md-7 col-12 form-input" id="divNomePagador">
+                                    <label>Nome completo do pagador <span>*</span></label>
+                                    <input type="text" name="NomePagador" id="NomePagador" class="form-control" />
+                                </div>
+                                <div class="col-md-5 col-12 form-input" id="divCelularPagador">
+                                    <label>Telefone (WhatsApp) <span>*</span></label>
+                                    <input type="text" name="Celular" id="Celular" class="form-control mask_celular" />
+                                </div>
+                                <div class="col-12 form-input" id="divSenha" style="display: none">
+                                    <label>Informe sua Senha <span>*</span></label>
+                                    <input type="password" name="Senha" id="Senha" maxlength="10" value="@Base.GerarSenha()" class="form-control" /><br/>
+                                    <a asp-action="Entrar" target="_blank">Esqueceu a senha?</a>
+                                </div>
+                                <p>
+                                    <input type="checkbox" name="emailCorreto" />
+                                    Confirmo que o e-mail acima está correto
+                                </p>
+                            </div>
+                        }
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="produtos">
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td style="font-weight: bold">Total</td>
+                                    <td id="total" style="font-weight: bold">R$ 0,00</td>
+                                </tr>
+                        </table>
+                        <button id="pagar" type="button" @disabled class="btn btn-primary btn-block waves-effect waves-light m-t-10" style="width: 100%; margin-top: 15px; color: #FFF; padding: 10px 0;">FINALIZAR PEDIDO</button>
+                    </div>
+                </div>
+                <div class="col-12 total">
+                    Total
+                    <span>R$ @valor</span>
+                </div>
+                <div class="col-12 text-center">
+                    <button id="passo1" type="button" class="btn btn-info btn-block waves-effect waves-light m-t-10" style="width: 100%; margin-top: 15px; background-color: #05A5FB; color: #FFF; padding: 10px 0;">SOLICITAR CERTIDÃO</button>
+                    <input id="continua" name="continua" type="hidden" value="" />
+                </div>
+                <p>&nbsp;</p>
+            </div>
+
+
+            @Html.HiddenFor(a => a.Tipo)
+            @Html.HiddenFor(a => a.Status)
+            @Html.HiddenFor(a => a.StatusTransacao)
+            @Html.HiddenFor(a => a.TidTransacao)
+            @Html.HiddenFor(a => a.PixQrCode)
+            @Html.HiddenFor(a => a.PixCopiaCola)
+            @Html.HiddenFor(a => a.Valor)
+            @Html.Hidden("rediret", "#detalhes")
+        </form>
+        <input type="hidden" id="TidTransacaoTemp" />
+        <input type="hidden" id="PixQrCodeTemp" />
+    </div>
+</div>
+<div class="container">
+    <div id="pix" style="display: none">
+        <div class="sucesso" style="background-color: #06BD22; color: #FFF; border-radius: 10px; padding: 40px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24" style="float: left; margin-right: 15px; margin-left: 15px; height: 65px; width: 30px"><path fill-rule="evenodd" d="M15.663 3.78A9 9 0 1 0 21 12.004v-.92a1 1 0 1 1 2 0v.92A11.002 11.002 0 0 1 8.188 22.319a11 11 0 1 1 8.289-20.366 1 1 0 1 1-.814 1.827Zm7.044-.487a1 1 0 0 1 0 1.414l-10 10.01a1 1 0 0 1-1.414 0l-3-3a1 1 0 1 1 1.414-1.414L12 12.595l9.293-9.302a1 1 0 0 1 1.414 0Z" clip-rule="evenodd"></path></svg>
+            <p style="font-size: 19pt; text-align: left;">Seu pedido foi registrado com sucesso! Efetue o pagamento com o QRCode abaixo:</p>
+        </div>
+        <div class="dadosPix">
+            <div class="qrCode">
+            </div>
+            <div class="qrDadosCode">
+                <p style="font-size: 18pt; margin-left: 11px;">PIX Copia e cola</p>
+                <div id="copiaCola">
+                </div>
+                <div id="resultValor"></div>
+            </div>
+        </div>
+        <div class="dadosPix">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody id="resulPprodutos">
+                </tbody>
+                <tfoot>
+
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="footer">
+    <p>&nbsp;</p>
+
+    <p>&nbsp;</p>
+    <div class="container">
+        <div class="logoRodape">
+            <div><img src="/v2/images/logo-rodape.svg" style="width: 200px;" /></div>
+            <div class="text-center">
+                <a href="/Politica-de-Privacidade.pdf" target="_blank">Política de Privacidade</a><br />
+                <a href="/Termos-de-Uso.pdf" target="_blank">Termos de Uso</a>
+            </div>
+            <div class="text-right">
+                <img src="~/v2/images/compra-segura-optimized.png" /> &nbsp; <img src="~/v2/images/satisfacao-optimized.png" /> &nbsp; <img src="~/v2/images/site-seguro-optimized.png" />
+            </div>
+        </div>
+    </div>
+    <p>&nbsp;</p>
+    <div class="root">
+        <div class="container">
+            <div class="row">
+                <div class=" col-12">
+                    Copyright © @DateTime.Today.Year Certidão Negativa Br CNPJ 54.673.333/0001-00 | Todos os direitos Reservados
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

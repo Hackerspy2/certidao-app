@@ -1,0 +1,111 @@
+﻿@using HtmlHelper = WebApp.Models.HtmlHelper
+@model Domain.Ticket
+@{
+    Layout = "~/Views/Shared/_Modal.cshtml";
+}
+@section scripts
+{
+    <script>
+        var jDataTableDados = function(idTabela, url, controller, rowConfirm, classDetails, classEdit, classDel, janela = "") {
+            myTable = $(idTabela).dataTable({
+                sAjaxSource: url,
+                bServerSide: true,
+                searching: false,
+                bDestroy: true,
+                bPaginate: true,
+                pageLength: 50,
+                dom: 'fBrtip',
+                language: { url: '/admin/libs/datatables/pt-br.json' },
+                buttons: [],
+                aoColumnDefs: [
+                    { bSortable: false, aTargets: [-1] },
+                    { bSearchable: false, aTargets: [-1] },
+                    {
+                        mRender: function(data, type, row) {
+                            var id = data;
+                            var html = "<div class='btn-group ml-auto m-t-10'>";
+                            html += "<a href='javascript:void(0)' class='icon-options-vertical link' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'></a><div class='dropdown-menu dropdown-menu-right dropOptions' data-id='" + id + "'>";
+                            if (classDel != "hide-item") {
+                                html += "<a href='javascript:;' title='Deletar' class='deletar" + janela + " " + classDel + " dropdown-item' data-rel='" + id + "|" + row[rowConfirm] + "|" + controller + "|Del'> Deletar</a>";
+                            }
+                            html += "</div></div>";
+                            return html;
+                        },
+                        aTargets: [-1]
+                    }, {
+                        mRender: function(data, type, row) {
+                            let html = "";
+                            if (row[3] != null) {
+                                html = `<a href='/temp/${row[3]}' target='_blank'>Visualizar</a>`;
+                            }
+                            return html;
+                        },
+                        aTargets: [3]
+                    }
+                ],
+                fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    $(nRow).attr("id", aData[aData.length - 1]);
+                    var cssClass = aData[6] == "Cancelado" ? "red" : "";
+                    $(nRow).addClass(cssClass);
+                    return nRow;
+                },
+                initComplete: function() {
+                    $('.dataTables_filter input')
+                        .unbind()
+                        .bind('keyup',
+                            function(e) {
+                                if (this.value.length == 0) {
+                                    myTable.fnFilter('');
+                                } else {
+                                    if (this.value.length >= 3 && e.keyCode == 13) {
+                                        myTable.fnFilter(this.value);
+                                    }
+                                }
+                            });
+                }
+
+            });
+        };
+        var carregarDados = function(chamada) {
+            switch (chamada) {
+            case "#mensagens":
+                jDataTableDados("#tableInteracoes", "/Interacao/ListByTicket/?idTicket=@Model.Id", "Interacao", 0, "hide-item", "hide-item", "", "PaiPai", "asc");
+                break;
+            }
+        }
+        $(document).ready(function() {
+            $('a[data-toggle="tab"]').on('shown.bs.tab',
+                function(e) {
+                    var target = $(e.target).attr("href");
+                    carregarDados(target);
+                });
+            carregarDados("#mensagens");
+        });
+    </script>
+}
+<div class="animated fadeIn">
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#detalhes" role="tab"><span class="hidden-sm-up"><i class="ti-home"></i></span> <span class="hidden-xs-down">Detalhes</span></a></li>
+        @if (Model.Status != "Em aberto")
+        {
+            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#interacoes" role="tab"><span class="hidden-sm-up"><i class="ti-home"></i></span> <span class="hidden-xs-down">Interações</span></a></li>
+        }
+    </ul>
+    <div class="tab-content tabcontent-border">
+        <div class="tab-pane active" id="detalhes">
+            <div class="p-20">
+                <div class="row">
+                    <partial name="_dados" model="Model" />
+                </div>
+            </div>
+        </div>
+    @if (Model.Status != "Em aberto")
+    {
+        <div class="tab-pane" id="interacoes">
+            <div class="p-20">
+                @Html.Raw(HtmlHelper.MontaTabelaHtml("tableInteracoes", $"/Interacao/Add/?dados={Model.Id}&tipo=add&janela=bisneta", "Nova interação", "", "Data|Mensagem|Status|Anexo", "PaiPai"))
+            </div>
+        </div>
+    }
+    </div>
+</div>

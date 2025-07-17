@@ -1,0 +1,110 @@
+{
+  "id": "hook_Qb6jKwps1ZF8j2px",
+  "account": {
+    "id": "acc_0Mk7qWDfDJu1raXJ",
+    "name": "Certidão Negativa LTDA (Certidão Negativa )"
+  },
+  "type": "order.paid",
+  "created_at": "2024-02-05T15:10:55.1492449Z",
+  "data": {
+    "id": "or_OM4L5ObtAtMXKdBr",
+    "code": "VN4ZTDT0GZ",
+    "amount": 3571,
+    "currency": "BRL",
+    "items": [
+      {
+        "id": "oi_Z58QpxAsLsaM6XvN",
+        "amount": 3571,
+        "created_at": "2024-02-05T15:09:21.0966667Z",
+        "description": "Certidão Negativa",
+        "quantity": 1,
+        "status": "active",
+        "updated_at": "2024-02-05T15:09:21.0966667Z"
+      }
+    ],
+    "customer": {
+      "id": "cus_0rJpAzMfPfeLq3Nx",
+      "name": "MARIA ELIANA DA SILVA",
+      "email": "elianasilva059@gmail.com",
+      "document": "00444446133",
+      "type": "individual",
+      "delinquent": false,
+      "created_at": "2024-02-05T15:05:19.553Z",
+      "updated_at": "2024-02-05T15:09:21.097Z",
+      "phones": {
+        "mobile_phone": {
+          "country_code": "55",
+          "number": "999756252",
+          "area_code": "67"
+        }
+      },
+      "metadata": {}
+    },
+    "status": "paid",
+    "created_at": "2024-02-05T15:09:21.097Z",
+    "updated_at": "2024-02-05T15:10:55.0216991Z",
+    "charges": [
+      {
+        "id": "ch_NV3QgKjuPudAWqmo",
+        "code": "VN4ZTDT0GZ",
+        "gateway_id": "2309936884",
+        "amount": 3571,
+        "paid_amount": 3571,
+        "status": "paid",
+        "currency": "BRL",
+        "payment_method": "pix",
+        "paid_at": "2024-02-05T15:10:52Z",
+        "created_at": "2024-02-05T15:09:21.113Z",
+        "updated_at": "2024-02-05T15:10:55.0156897Z",
+        "pending_cancellation": false,
+        "customer": {
+          "id": "cus_0rJpAzMfPfeLq3Nx",
+          "name": "MARIA ELIANA DA SILVA",
+          "email": "elianasilva059@gmail.com",
+          "document": "00444446133",
+          "type": "individual",
+          "delinquent": false,
+          "created_at": "2024-02-05T15:05:19.553Z",
+          "updated_at": "2024-02-05T15:09:21.097Z",
+          "phones": {
+            "mobile_phone": {
+              "country_code": "55",
+              "number": "999756252",
+              "area_code": "67"
+            }
+          },
+          "metadata": {}
+        },
+        "last_transaction": {
+          "transaction_type": "pix",
+          "pix_provider_tid": "2309936884",
+          "qr_code": "00020101021226820014br.gov.bcb.pix2560pix.stone.com.br/pix/v2/2044eb39-812e-464f-9705-782379153535520400005303986540535.715802BR5922Certidao Negativa LTDA6014RIO DE JANEIRO62290525pacls92ibu2ys561fladl7kcg630479F8",
+          "qr_code_url": "https://api.pagar.me/core/v5/transactions/tran_QAX2DZVfGfrDBMnL/qrcode?payment_method=pix",
+          "end_to_end_id": "E60746948202402051510A14820Tr0tw",
+          "payer": {
+            "name": "MARIA ELIANA DASILVA",
+            "document": "***444461**",
+            "document_type": "cpf",
+            "bank_account": {
+              "bank_name": "Banco Bradesco S.A.",
+              "ispb": "60746948"
+            }
+          },
+          "expires_at": "2024-02-06T15:09:21Z",
+          "id": "tran_8XMewAeF4F2wDa1g",
+          "gateway_id": "2309936884",
+          "amount": 3571,
+          "status": "paid",
+          "success": true,
+          "created_at": "2024-02-05T15:10:55.0156897Z",
+          "updated_at": "2024-02-05T15:10:55.0156897Z",
+          "gateway_response": {},
+          "antifraud_response": {},
+          "metadata": {}
+        },
+        "metadata": {}
+      }
+    ],
+    "metadata": {}
+  }
+}

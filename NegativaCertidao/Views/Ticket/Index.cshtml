@@ -1,0 +1,500 @@
+﻿@inject IConfiguration Config
+@{
+    ViewBag.Titulo = "Certidão Negativa";
+    ViewBag.Descricao = "Certidão Negativa";
+    Layout = "~/Views/Shared/_Site.cshtml";
+    var valor = Config.GetSection("ValorSite").Value;
+}
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $($("#seletor div")[0]).addClass("ativo");
+            $('.ancora').click(function () {
+                $(".nav-link").removeClass("active");
+                $(this).addClass("active");
+                $('html, body').animate({
+                    scrollTop: $($(this).attr('href')).offset().top
+                }, 1000);
+                return false;
+            });
+            $(".accordion-button").click(function () {
+                $(".fa-minus").hide();
+                $(".fa-plus").show();
+
+                var minusIcon = $(this).find(".fa-minus");
+                var plusIcon = $(this).find(".fa-plus");
+                if (minusIcon.is(":visible")) {
+                    minusIcon.hide();
+                    plusIcon.show();
+                } else {
+                    minusIcon.show();
+                    plusIcon.hide();
+                }
+            });
+        });
+    </script>
+}
+<div class="linha-topo">
+    <h2 class="text-center">Encontre a certidão que precisa, de um jeito fácil e sem filas.</h2>
+</div>
+<div id="topo">
+    <div class="container">
+        <div class="row">
+            <div class="col-6">
+                <a href="/">
+                    <img src="~/v2/images/logo-topo.svg" class="logo" />
+                </a>
+            </div>
+            <div class="col-6 text-right">
+                @* <a asp-action="Acompanhar" class="btn btn-primary acompanhar"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 4a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7ZM6.5 7.5a5.5 5.5 0 1 1 11 0 5.5 5.5 0 0 1-11 0Zm2.826 7h5.348c1.227 0 2.065 0 2.777.215a5 5 0 0 1 3.334 3.334c.216.712.215 1.55.215 2.777V21a1 1 0 0 1-2 0c0-1.468-.01-1.98-.13-2.37a3 3 0 0 0-2-2c-.39-.12-.902-.13-2.37-.13h-5c-1.468 0-1.98.01-2.37.13a3 3 0 0 0-2 2c-.12.39-.13.902-.13 2.37a1 1 0 1 1-2 0v-.174c0-1.227 0-2.065.215-2.777a5 5 0 0 1 3.334-3.334c.712-.216 1.55-.216 2.777-.215Z" clip-rule="evenodd"></path></svg> Acompanhar Emissão</a> *@
+                <nav class="navbar navbar-expand-lg bg-body-tertiary">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item"><a class="nav-link active" aria-current="page" href="/"> Emitir Certidão </a></li>
+                            <li class="nav-item"><a class="nav-link ancora" href="#sobre"> Sobre Nós </a></li>
+                            <li class="nav-item"><a class="nav-link" asp-action="FaleConosco"> Contato </a></li>
+                        </ul>
+                    </div>
+                </nav>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div id="seletor">
+        <div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M8.759 1H14a1 1 0 0 1 .707.293l6 6A1 1 0 0 1 21 8v9.241c0 .805 0 1.47-.044 2.01-.046.563-.145 1.08-.392 1.565a4 4 0 0 1-1.748 1.748c-.485.247-1.002.346-1.564.392-.541.044-1.206.044-2.01.044H8.758c-.805 0-1.47 0-2.01-.044-.563-.046-1.08-.145-1.565-.392a4 4 0 0 1-1.748-1.748c-.247-.485-.346-1.002-.392-1.564C3 18.71 3 18.046 3 17.242V6.758c0-.805 0-1.47.044-2.01.046-.563.145-1.08.392-1.565a4 4 0 0 1 1.748-1.748c.485-.247 1.002-.346 1.564-.392C7.29 1 7.954 1 8.758 1ZM6.91 3.038c-.438.035-.663.1-.819.18a2 2 0 0 0-.874.874c-.08.156-.145.38-.18.819C5 5.361 5 5.943 5 6.8v10.4c0 .857 0 1.439.038 1.889.035.438.1.663.18.819a2 2 0 0 0 .874.874c.156.08.38.145.819.18C7.361 21 7.943 21 8.8 21h6.4c.857 0 1.439 0 1.889-.038.438-.035.663-.1.819-.18a2 2 0 0 0 .874-.874c.08-.156.145-.38.18-.819.037-.45.038-1.032.038-1.889V9h-3.432c-.252 0-.498 0-.706-.017a2.022 2.022 0 0 1-.77-.2 2 2 0 0 1-.874-.875 2.022 2.022 0 0 1-.201-.77C13 6.93 13 6.684 13 6.432V3H8.8c-.857 0-1.439 0-1.889.038ZM15 4.414 17.586 7H15.6a8.194 8.194 0 0 1-.589-.011v-.014A8.205 8.205 0 0 1 15 6.4V4.414ZM7 9a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Zm0 4a1 1 0 0 1 1-1h8a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Zm0 4a1 1 0 0 1 1-1h8a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Z" clip-rule="evenodd"></path></svg>
+            <div class="titulo">
+                Selecionar Certidão
+            </div>
+        </div>
+        <div class="divider">
+            <span>....</span>
+        </div>
+        <div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M10 4a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7ZM4.5 7.5a5.5 5.5 0 1 1 11 0 5.5 5.5 0 0 1-11 0Zm13.543 2.543a2.768 2.768 0 1 1 3.914 3.914L15.5 20.414l-.022.023a2.752 2.752 0 0 1-.318.285 1.99 1.99 0 0 1-.35.205 2.71 2.71 0 0 1-.403.14l-.031.008-3.101.887a1 1 0 0 1-1.237-1.237l.886-3.101.01-.03a2.64 2.64 0 0 1 .139-.405 1.97 1.97 0 0 1 .205-.349c.092-.125.2-.232.285-.318l.023-.022 6.457-6.457Zm2.5 1.414c-.3-.3-.786-.3-1.086 0L13 17.914a5.977 5.977 0 0 0-.107.109l-.002.001v.002c-.01.029-.02.068-.043.147l-.392 1.371 1.37-.392c.08-.022.12-.034.148-.043h.002l.001-.002c.022-.02.05-.049.109-.107l6.457-6.457c.3-.3.3-.786 0-1.086ZM7.326 14.5H9a1 1 0 1 1 0 2H7.5c-1.468 0-1.98.01-2.37.13a3 3 0 0 0-2 2c-.12.39-.13.902-.13 2.37a1 1 0 1 1-2 0v-.174c0-1.227 0-2.065.215-2.777a5 5 0 0 1 3.334-3.334c.712-.216 1.55-.216 2.777-.215Z" clip-rule="evenodd"></path></svg>
+            <div class="titulo">
+                Dados Pessoais
+            </div>
+        </div>
+        <div class="divider">
+            <span>....</span>
+        </div>
+        <div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M2.771 9.527a3.502 3.502 0 0 0 0 4.945l6.757 6.757a3.501 3.501 0 0 0 4.944 0l6.757-6.757a3.502 3.502 0 0 0 0-4.944l-6.757-6.757A3.486 3.486 0 0 0 12 1.75c-.895 0-1.79.34-2.472 1.021L2.771 9.527ZM9.04 7.72a2.652 2.652 0 0 0-1.84-.78l3.25-3.25a2.186 2.186 0 0 1 3.103 0l3.25 3.25a2.66 2.66 0 0 0-1.842.777l-.073.073-2.639 2.64a.346.346 0 0 1-.497 0L9.039 7.719Zm-1.876.523c.346 0 .678.133.927.369l.029.028 2.712 2.712a1.66 1.66 0 0 0 2.337 0l2.712-2.712c.254-.254.598-.397.957-.397h1.265l2.206 2.206a2.19 2.19 0 0 1 0 3.104l-2.205 2.205h-1.266c-.359 0-.703-.142-.957-.396l-2.712-2.712A1.647 1.647 0 0 0 12 12.168c-.422 0-.847.16-1.17.48l-2.71 2.714-.028.028a1.35 1.35 0 0 1-.928.368H5.898l-2.206-2.206a2.188 2.188 0 0 1 0-3.103l2.205-2.206h1.266Zm7.797 8.04a2.66 2.66 0 0 0 1.842.777l-3.25 3.25c-.86.86-2.243.86-3.103 0L7.2 17.06a2.652 2.652 0 0 0 1.84-.778l2.712-2.712a.349.349 0 0 1 .497 0l2.639 2.639.073.074Z"></path></svg>
+            <div class="titulo">
+                Pagamento
+            </div>
+        </div>
+        <div class="divider">
+            <span>....</span>
+        </div>
+        <div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M8.759 1h6.482c.805 0 1.47 0 2.01.044.563.046 1.08.145 1.565.392a4 4 0 0 1 1.748 1.748c.247.485.346 1.002.392 1.564C21 5.29 21 5.954 21 6.758V12.5a1 1 0 1 1-2 0V6.8c0-.857 0-1.439-.038-1.889-.035-.438-.1-.663-.18-.819a2 2 0 0 0-.874-.874c-.156-.08-.38-.145-.819-.18C16.639 3 16.057 3 15.2 3H8.8c-.857 0-1.439 0-1.889.038-.438.035-.663.1-.819.18a2 2 0 0 0-.874.874c-.08.156-.145.38-.18.819C5 5.361 5 5.943 5 6.8v10.4c0 .857 0 1.439.038 1.889.035.438.1.663.18.819a2 2 0 0 0 .874.874c.156.08.38.145.819.18C7.361 21 7.943 21 8.8 21h3.7a1 1 0 1 1 0 2H8.759c-.805 0-1.47 0-2.01-.044-.563-.046-1.08-.145-1.565-.392a4 4 0 0 1-1.748-1.748c-.247-.485-.346-1.002-.392-1.564C3 18.71 3 18.046 3 17.242V6.758c0-.805 0-1.47.044-2.01.046-.563.145-1.08.392-1.565a4 4 0 0 1 1.748-1.748c.485-.247 1.002-.346 1.564-.392C7.29 1 7.954 1 8.758 1ZM7 7a1 1 0 0 1 1-1h8a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Zm0 4a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Zm0 4a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Zm11 0a1 1 0 0 1 1 1v3.586l1.293-1.293a1 1 0 0 1 1.414 1.414l-3 3a1 1 0 0 1-1.414 0l-3-3a1 1 0 0 1 1.414-1.414L17 19.586V16a1 1 0 0 1 1-1Z" clip-rule="evenodd"></path></svg>
+            <div class="titulo">
+                Baixar Certidão Digital
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="container">
+    <div id="certidoes">
+        <h1>1. Selecione a certidão que quer emitir</h1>
+        <div class="item">
+            <a href="@Url.Action("Add", "Ticket", new { tipo = "Certidão Negativa Criminal" })"><div>Certidão Negativa Criminal<span>R$ @valor</span></div></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="@Url.Action("Add", "Ticket", new { tipo = "Certidão Negativa Cível" })"><div>Certidão Negativa Cível<span>R$ @valor</span></div></a>
+        </div>
+        <div class="item">
+            <a href="@Url.Action("Add", "Ticket", new { tipo = "Certidão de Quitação Eleitoral" })"><div>Certidão Negativa Eleitoral<span>R$ @valor</span></div></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="@Url.Action("Add", "Ticket", new { tipo = "Certidão de Antecedentes Criminais da Polícia Federal" })"><div>Antecedentes Criminais da Polícia Federal<span>R$ @valor</span></div></a>
+
+        </div>
+        <div class="item">
+            <a href="@Url.Action("Add", "Ticket", new { tipo = "Certidão CPF Regular" })"> <div>Certidão de CPF Regular<span>R$ @valor</span> </div></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="@Url.Action("Add", "Ticket", new { tipo = "Certidão Negativa de Débitos - CND" })"><div>Certidão Negativa de Débitos (CND)<span>R$ @valor</span></div></a>
+        </div>
+        <div class="item">
+            <a href="@Url.Action("Add", "Ticket" , new { tipo="Certidão Negativa de Débitos Trabalhista" })"><div>Certidão Negativa de Débitos Trabalhista<span>R$ @valor</span></div></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="javascript:;"><div>Certidão Negativa Militar<span>R$ @valor</span></div></a>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="como-emitir">
+        <h3>Como emitir a Certidão Negativa Digital</h3>
+        <p>Em apenas 3 passos resumidos em 5 minutos, você solicita sua certidão negativa online sem burocracia.</p>
+    </div>
+</div>
+
+<div id="bgPassos">
+    <div class="container">
+        <div id="passos">
+            <div class="titulo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M8.759 1H14a1 1 0 0 1 .707.293l6 6A1 1 0 0 1 21 8v9.241c0 .805 0 1.47-.044 2.01-.046.563-.145 1.08-.392 1.565a4 4 0 0 1-1.748 1.748c-.485.247-1.002.346-1.564.392-.541.044-1.206.044-2.01.044H8.758c-.805 0-1.47 0-2.01-.044-.563-.046-1.08-.145-1.565-.392a4 4 0 0 1-1.748-1.748c-.247-.485-.346-1.002-.392-1.564C3 18.71 3 18.046 3 17.242V6.758c0-.805 0-1.47.044-2.01.046-.563.145-1.08.392-1.565a4 4 0 0 1 1.748-1.748c.485-.247 1.002-.346 1.564-.392C7.29 1 7.954 1 8.758 1ZM6.91 3.038c-.438.035-.663.1-.819.18a2 2 0 0 0-.874.874c-.08.156-.145.38-.18.819C5 5.361 5 5.943 5 6.8v10.4c0 .857 0 1.439.038 1.889.035.438.1.663.18.819a2 2 0 0 0 .874.874c.156.08.38.145.819.18C7.361 21 7.943 21 8.8 21h6.4c.857 0 1.439 0 1.889-.038.438-.035.663-.1.819-.18a2 2 0 0 0 .874-.874c.08-.156.145-.38.18-.819.037-.45.038-1.032.038-1.889V9h-3.432c-.252 0-.498 0-.706-.017a2.022 2.022 0 0 1-.77-.2 2 2 0 0 1-.874-.875 2.022 2.022 0 0 1-.201-.77C13 6.93 13 6.684 13 6.432V3H8.8c-.857 0-1.439 0-1.889.038ZM15 4.414 17.586 7H15.6a8.194 8.194 0 0 1-.589-.011v-.014A8.205 8.205 0 0 1 15 6.4V4.414ZM7 9a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Zm0 4a1 1 0 0 1 1-1h8a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Zm0 4a1 1 0 0 1 1-1h8a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Z" clip-rule="evenodd"></path></svg>
+                <span>1. Selecione a Certidão</span>
+            </div>
+            <p>Selecione qual a certidão negativa você quer emitir, temos 10 tipos de certidões, entre estadual, federal, criminal, cível, de débitos e eleitoral.</p>
+            <div class="titulo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M10 4a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7ZM4.5 7.5a5.5 5.5 0 1 1 11 0 5.5 5.5 0 0 1-11 0Zm13.543 2.543a2.768 2.768 0 1 1 3.914 3.914L15.5 20.414l-.022.023a2.752 2.752 0 0 1-.318.285 1.99 1.99 0 0 1-.35.205 2.71 2.71 0 0 1-.403.14l-.031.008-3.101.887a1 1 0 0 1-1.237-1.237l.886-3.101.01-.03a2.64 2.64 0 0 1 .139-.405 1.97 1.97 0 0 1 .205-.349c.092-.125.2-.232.285-.318l.023-.022 6.457-6.457Zm2.5 1.414c-.3-.3-.786-.3-1.086 0L13 17.914a5.977 5.977 0 0 0-.107.109l-.002.001v.002c-.01.029-.02.068-.043.147l-.392 1.371 1.37-.392c.08-.022.12-.034.148-.043h.002l.001-.002c.022-.02.05-.049.109-.107l6.457-6.457c.3-.3.3-.786 0-1.086ZM7.326 14.5H9a1 1 0 1 1 0 2H7.5c-1.468 0-1.98.01-2.37.13a3 3 0 0 0-2 2c-.12.39-.13.902-.13 2.37a1 1 0 1 1-2 0v-.174c0-1.227 0-2.065.215-2.777a5 5 0 0 1 3.334-3.334c.712-.216 1.55-.216 2.777-.215Z" clip-rule="evenodd"></path></svg>
+                <span>2. Preencha o Formulário</span>
+            </div>
+            <p>Cada certidão exige dados específicos para sua emissão, nesse passo é preciso preencher com os dados com atenção para evitar erros, já que a emissão é automática com os dados preenchidos.</p>
+            <div class="titulo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M2.771 9.527a3.502 3.502 0 0 0 0 4.945l6.757 6.757a3.501 3.501 0 0 0 4.944 0l6.757-6.757a3.502 3.502 0 0 0 0-4.944l-6.757-6.757A3.486 3.486 0 0 0 12 1.75c-.895 0-1.79.34-2.472 1.021L2.771 9.527ZM9.04 7.72a2.652 2.652 0 0 0-1.84-.78l3.25-3.25a2.186 2.186 0 0 1 3.103 0l3.25 3.25a2.66 2.66 0 0 0-1.842.777l-.073.073-2.639 2.64a.346.346 0 0 1-.497 0L9.039 7.719Zm-1.876.523c.346 0 .678.133.927.369l.029.028 2.712 2.712a1.66 1.66 0 0 0 2.337 0l2.712-2.712c.254-.254.598-.397.957-.397h1.265l2.206 2.206a2.19 2.19 0 0 1 0 3.104l-2.205 2.205h-1.266c-.359 0-.703-.142-.957-.396l-2.712-2.712A1.647 1.647 0 0 0 12 12.168c-.422 0-.847.16-1.17.48l-2.71 2.714-.028.028a1.35 1.35 0 0 1-.928.368H5.898l-2.206-2.206a2.188 2.188 0 0 1 0-3.103l2.205-2.206h1.266Zm7.797 8.04a2.66 2.66 0 0 0 1.842.777l-3.25 3.25c-.86.86-2.243.86-3.103 0L7.2 17.06a2.652 2.652 0 0 0 1.84-.778l2.712-2.712a.349.349 0 0 1 .497 0l2.639 2.639.073.074Z"></path></svg>
+                <span>3. Pagamento via PIX</span>
+            </div>
+            <p>Após preencher os dados, basta efetivar o pagamento da emissão da certidão negativa digital. Todas as certidões possuem o mesmo preço, R$ @valor e a compensação do pagamento é automática.</p>
+        </div>
+    </div>
+</div>
+
+<div id="footer">
+    <div class="desempenho">
+        <div class="container estatisticas">
+            <div>
+                <div class="contador">
+                    <span class="numero">97</span>
+                    <span>%</span>
+                </div>
+                <div>Avaliações positivas</div>
+            </div>
+            <div>
+                <div class="contador">
+                    <span class="numero">3,657</span>
+                </div>
+                <div>
+                    Clientes atendidos
+                </div>
+            </div>
+            <div>
+                <div class="contador">
+                    <span class="numero">6</span>
+                </div>
+                <div>
+                    Anos no mercado
+                </div>
+            </div>
+            <div>
+                <div class="contador">
+                    <span class="numero">15000</span>
+                </div>
+                <div>
+                    Certidões emitidas
+                </div>
+            </div>
+        </div>
+    </div>
+    <p>&nbsp;</p>
+
+    <div class="container">
+        <div id="sobre">
+            <h3 class="text-center">Sobre nós</h3>
+            <p>&nbsp;</p>
+            <div class="texto">
+                <div>
+                    <p>
+                        A Documentos Certidão Negativa Ltda é uma empresa especializada em serviços documentais, com foco em agilidade, eficiência e atendimento personalizado. Nossa equipe está preparada para lidar com uma variedade de questões documentais, desde certidões criminais federais a estaduais, certidões eleitorais e muito mais.
+                    </p>
+                    <p>&nbsp;</p>
+                    <h6>Nossos Serviços</h6>
+                    <p>&nbsp;</p>
+                    <p>
+                        Assessoria Documentalista:<br />
+                        Oferecemos suporte completo para serviços relacionados a certidões negativas.<br />
+                        Fornecemos soluções rápidas e descomplicadas para questões específicas.<br />
+                        Solicitações e recebimento de documentos com agilidade em todo o Brasil.
+                    </p>
+                </div>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                <div>
+                    <p>
+                        Acompanhamos processos e procedimentos junto aos órgãos da administração pública federal, estadual, municipal e distrital.
+                    </p> <br />
+                    <p>
+                        <strong>Por que escolher a Documentos Certidão Negativa Ltda?</strong><br />
+
+                        Experiência: Com anos de atuação, somos especialistas em lidar com burocracias e trâmites documentais.<br />
+                        Compromisso: Nosso compromisso é simplificar a vida dos nossos clientes, garantindo que seus documentos estejam em ordem.<br />
+                        Tudo em um único lugar: Aqui com a gente você encontra uma enorme variedade de certidões em um único site, tornando assim o processo mais ágil.<br />
+                        Se você precisa de um assessoria documentalista confiável e eficiente, conte com a gente!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <div class="duvida">
+        <h2 class="text-center">Perguntas frequentes</h2>
+        <p>&nbsp;</p> <p>&nbsp;</p>
+        <div class="container">
+            <div class="accordion" id="accordionExample">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="item01">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse01" aria-expanded="true" aria-controls="collapseOne">
+                            <span class="icons">
+                                <i class="fas fa-plus" style="display: none"></i>
+                                <i class="fas fa-minus"></i>
+                            </span>
+                            &nbsp; Como faço para solicitar uma certidão através do site?
+                        </button>
+                    </h2>
+                    <div id="collapse01" class="accordion-collapse collapse show" aria-labelledby="item01" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            Para solicitar uma certidão através do nosso site, basta acessar a página de solicitação clicando em <strong> Emitir Certidão</strong>, preencher o formulário com as informações necessárias e efetuar o pagamento. Após a confirmação do pagamento, iniciaremos o requerimento da certidão e posteriormente faremos o envio.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="item02">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse02" aria-expanded="false" aria-controls="collapseTwo">
+                            <span class="icons">
+                                <i class="fas fa-plus"></i>
+                                <i class="fas fa-minus" style="display: none"></i>
+                            </span>
+                            &nbsp; Quanto tempo leva para receber a minha certidão?
+                        </button>
+                    </h2>
+                    <div id="collapse02" class="accordion-collapse collapse" aria-labelledby="item02" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            O prazo para recebimento da certidão varia de acordo com o tipo de documento solicitado e a localidade onde ele será emitido. O  prazo que pedimos para a maioria dos documentos é de 24 horas, mas em geral as certidões são entregues nas primeiras 2 horas após a confirmação do pagamento.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="item03">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse03" aria-expanded="false" aria-controls="collapseThree">
+                            <span class="icons">
+                                <i class="fas fa-plus"></i>
+                                <i class="fas fa-minus" style="display: none"></i>
+                            </span>
+                            &nbsp; Posso cancelar ou alterar minha solicitação após efetuar o pagamento?
+                        </button>
+                    </h2>
+                    <div id="collapse03" class="accordion-collapse collapse" aria-labelledby="item03" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            Sim, é possível cancelar ou alterar sua solicitação após efetuar o pagamento, desde que a solicitação ainda não tenha sido processada. Para fazer isso, clique no botão <strong>Contato</strong> no canto superior direito e envie a alteração que deseja fazer.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="item04">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse04" aria-expanded="false" aria-controls="collapseThree">
+                            <span class="icons">
+                                <i class="fas fa-plus"></i>
+                                <i class="fas fa-minus" style="display: none"></i>
+                            </span>
+                            &nbsp; O que acontece se a minha certidão não puder ser emitida?
+                        </button>
+                    </h2>
+                    <div id="collapse04" class="accordion-collapse collapse" aria-labelledby="item04" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <span class="icons">
+                                <i class="fas fa-plus"></i>
+                                <i class="fas fa-minus" style="display: none"></i>
+                            </span>
+                            &nbsp; Caso a sua certidão não possa ser emitida por algum motivo, entraremos em contato com você para informar sobre a situação e providenciar o reembolso do valor pago.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="item05">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse05" aria-expanded="false" aria-controls="collapseThree">
+                            <span class="icons">
+                                <i class="fas fa-plus"></i>
+                                <i class="fas fa-minus" style="display: none"></i>
+                            </span>
+                            &nbsp; O site cobra alguma taxa adicional pelo serviço prestado?
+                        </button>
+                    </h2>
+                    <div id="collapse05" class="accordion-collapse collapse" aria-labelledby="item05" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            Sim, cobramos uma taxa pelo serviço prestado, que varia de acordo com o tipo de certidão solicitada e a localidade onde ela será emitida. O valor da taxa é informado durante o processo de solicitação da certidão.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="item06">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse06" aria-expanded="false" aria-controls="collapseThree">
+                            <span class="icons">
+                                <i class="fas fa-plus"></i>
+                                <i class="fas fa-minus" style="display: none"></i>
+                            </span>
+                            &nbsp; Essa atividade é legal?
+                        </button>
+                    </h2>
+                    <div id="collapse06" class="accordion-collapse collapse" aria-labelledby="item06" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            Sim! A Atividade de Despachante Documentalista é devidamente regulamentada pela Lei 14.282, DE 28 DE DEZEMBRO DE 2021.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="item07">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse07" aria-expanded="false" aria-controls="collapseThree">
+                            <span class="icons">
+                                <i class="fas fa-plus"></i>
+                                <i class="fas fa-minus" style="display: none"></i>
+                            </span>
+                            &nbsp; Posso emitir as certidões sem a ajuda do Certidão Negativa?
+                        </button>
+                    </h2>
+                    <div id="collapse07" class="accordion-collapse collapse" aria-labelledby="item07" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <p>Sim! O agendamento e cadastro podem ser feitos gratuitamente sem o acompanhamento profissional deste site, através dos órgãos públicos do Governo.</p>
+
+                            <p>O serviço prestado pelo nosso site é um serviço privado e opcional, realizado por profissionais despachantes documentalistas autorizados pela Lei Nº 14.282, DE 28 DE DEZEMBRO DE 2021 e não inclui eventuais taxas de expedição de documentos.</p>
+
+                            <p>Entretanto, caso queira maior comodidade, assessoria e suporte, você pode contar com nossos serviços.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="item08">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse08" aria-expanded="false" aria-controls="collapseThree">
+                            <span class="icons">
+                                <i class="fas fa-plus"></i>
+                                <i class="fas fa-minus" style="display: none"></i>
+                            </span>
+                            &nbsp; Receberei a Certidão Negativa?
+                        </button>
+                    </h2>
+                    <div id="collapse08" class="accordion-collapse collapse" aria-labelledby="item08" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            Se não ocorrer nenhuma divergência, sim, a Certidão Negativa será enviada. Mas caso o nome pesquisado tenha alguma divergência, a Certidão será Positiva, e enviaremos o retorno enviado pelo órgão emissor.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="item09">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse09" aria-expanded="false" aria-controls="collapseThree">
+                            <span class="icons">
+                                <i class="fas fa-plus"></i>
+                                <i class="fas fa-minus" style="display: none"></i>
+                            </span>
+                            &nbsp; As certidões são originais?
+                        </button>
+                    </h2>
+                    <div id="collapse09" class="accordion-collapse collapse" aria-labelledby="item09" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            Sim. Todas as Certidões são emitidas pelos órgãos oficiais com código de autenticação online.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="item10">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse10" aria-expanded="false" aria-controls="collapseThree">
+                            <span class="icons">
+                                <i class="fas fa-plus"></i>
+                                <i class="fas fa-minus" style="display: none"></i>
+                            </span>
+                            &nbsp; O que estou pagando?
+                        </button>
+                    </h2>
+                    <div id="collapse10" class="accordion-collapse collapse" aria-labelledby="item10" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            Você está contratando o serviço prestado pela certidaonegativa.site, emissão e envio das certidões direto para o seu e-mail ou whatsapp, de forma rápida, segura, com garantia e comodidade!
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="item11">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse11" aria-expanded="false" aria-controls="collapseThree">
+                            <span class="icons">
+                                <i class="fas fa-plus"></i>
+                                <i class="fas fa-minus" style="display: none"></i>
+                            </span>
+                            &nbsp; E se não sair a Certidão Negativa? (Caso seja positiva)
+                        </button>
+                    </h2>
+                    <div id="collapse11" class="accordion-collapse collapse" aria-labelledby="item11" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            Não vendemos certidões NEGATIVAS. (isso seria totalmente ilegal) O que fazemos é a prestação de serviço de emissão de certidão – Que pode ser negativa (se tudo estiver certo) ou pode ser positiva se houver algum problema – Lembramos que a não emissão da certidão negativa é de inteira responsabilidade do solicitante – ou seja não saiu a negativa pelo motivo de débitos e ou inconsistências de cadastro. o mesmo se resolve facilmente bastando Pagar o Débito e ou acertar a inconsistência. caso sua certidão seja positiva. Vamos lhe orientar o que fazer para tirar a negativa e estaremos a disposição para lhe ajudar neste sentido.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="item12">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse12" aria-expanded="false" aria-controls="collapseThree">
+                            <span class="icons">
+                                <i class="fas fa-plus"></i>
+                                <i class="fas fa-minus" style="display: none"></i>
+                            </span>
+                            &nbsp; A Certidão é gratuita? O que é cobrado?
+                        </button>
+                    </h2>
+                    <div id="collapse12" class="accordion-collapse collapse" aria-labelledby="item12" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            Cobramos pelos serviços prestados para emissão de sua certidão – a certidão é gratuita se for solicitada diretamente no órgão do governo – Nós prestamos um serviço privado e opcional, de forma ágil, rápida e simples. – e por isso cobramos os valores destes serviços. Vendemos o serviço de emissão da certidão – que pode ser negativa (se tudo estiver certo) ou pode ser positiva se tiver algum problema – caso for positiva orientamos o que fazer para tirar a negativa.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="item13">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse13" aria-expanded="false" aria-controls="collapseThree">
+                            <span class="icons">
+                                <i class="fas fa-plus"></i>
+                                <i class="fas fa-minus" style="display: none"></i>
+                            </span>
+                            &nbsp; O site é do Governo?
+                        </button>
+                    </h2>
+                    <div id="collapse13" class="accordion-collapse collapse" aria-labelledby="item13" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            Não. Prestamos um serviço privado e opcional. Não temos vínculo com o governo ou órgãos emissores.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="item14">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse14" aria-expanded="false" aria-controls="collapseThree">
+                            <span class="icons">
+                                <i class="fas fa-plus"></i>
+                                <i class="fas fa-minus" style="display: none"></i>
+                            </span>
+                            &nbsp; Certidões Digitais
+                        </button>
+                    </h2>
+                    <div id="collapse14" class="accordion-collapse collapse" aria-labelledby="item14" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            Certidões digitais significam que será recebido digitalmente no e-mail, não significa que receberá no mesmo dia ou na mesma hora. Atente-se aos prazos de cada certidão.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <p>&nbsp;</p>
+    <div class="container">
+        <div class="logoRodape">
+            <div><img src="/v2/images/logo-rodape.svg" style="width: 200px;" /></div>
+            <div class="text-center">
+                <a href="/Politica-de-Privacidade.pdf" target="_blank">Política de Privacidade</a><br />
+                <a href="/Termos-de-Uso.pdf" target="_blank">Termos de Uso</a>
+            </div>
+            <div class="text-right">
+                <img src="~/v2/images/compra-segura-optimized.png" /> &nbsp; <img src="~/v2/images/satisfacao-optimized.png" /> &nbsp; <img src="~/v2/images/site-seguro-optimized.png" />
+            </div>
+        </div>
+    </div>
+    <p>&nbsp;</p>
+    <div class="root">
+        <div class="container">
+            <div class="row">
+                <div class=" col-12">
+                    Copyright © @DateTime.Today.Year Certidão Negativa Br CNPJ 46.085.034/0001-27 | Todos os direitos Reservados
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

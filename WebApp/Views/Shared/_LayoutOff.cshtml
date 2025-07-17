@@ -1,0 +1,66 @@
+﻿@using Microsoft.Extensions.Configuration
+@inject IConfiguration Config
+@using WebApp.Models
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@Config.GetSection("Sistema").Value</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
+    <link href="/admin/fonts/fonts.css" rel="stylesheet" />
+    <link href="/admin/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/admin/libs/sweetalert/sweetalert.css" rel="stylesheet" />
+    <link href="/admin/css/pages/floating-label.css" rel="stylesheet" />
+    <link href="/admin/css/pages/login-register-lock.css" rel="stylesheet" />
+    <link href="/admin/css/style.css" rel="stylesheet" />
+    <link href="/admin/admin.css" id="theme" rel="stylesheet" />
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    @RenderSection("styles", false)
+</head>
+<body class="card-no-border">
+<div class="preloader">
+    <div class="loader">
+        <div class="loader__figure"></div>
+        <p class="loader__label text-center">Carregando,<br/>Aguarde por gentileza...</p>
+    </div>
+</div>
+    <section id="wrapper">
+        @RenderBody()
+    </section>
+
+    <script src="/admin/libs/jquery/jquery.min.js"></script>
+    <script src="/admin/libs/bootstrap/js/popper.min.js"></script>
+    <script src="/admin/libs/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/admin/js/perfect-scrollbar.jquery.min.js"></script>
+    <script src="/admin/js/waves.js"></script>
+    <script src="/admin/js/sidebarmenu.js"></script>
+    <script src="/admin/js/custom.min.js"></script>
+    <script src="/admin/libs/sparkline/jquery.sparkline.min.js"></script>
+    <script src="/admin/libs/d3/d3.min.js"></script>
+    <script src="/admin/libs/c3-master/c3.min.js"></script>
+    <script src="/admin/libs/styleswitcher/jQuery.style.switcher.js"></script>
+    <script src="/admin/libs/sweetalert2/dist/sweetalert2.all.min.js"></script>
+    <script src="/admin/libs/sweetalert2/sweet-alert.init.js"></script>
+    <script src="/admin/validation.js"></script>
+    <script src="/admin/Geral.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $(".preloader").fadeOut();
+            $(".floating-labels .form-control").on("focus blur",
+                function (e) {
+                    $(this).parents(".form-group").toggleClass("focused", "focus" === e.type || this.value.length > 0);
+                });
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+    @RenderSection("scripts", false)
+</body>
+
+</html>

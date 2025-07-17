@@ -1,0 +1,42 @@
+﻿@model Domain.Ticket
+@using HtmlHelper = Web.Models.HtmlHelper
+@Html.Raw(HtmlHelper.MontaDiv("6", "Cadastro", $"{Model.DataCadastro} - {Model.UsuarioCadastro}"))
+@Html.Raw(HtmlHelper.MontaDiv("6", "Última alteração", $"{Model.DataAlteracao} - {Model.UsuarioAlteracao}"))
+<div class="col-12">
+    <div class="card">
+        <div class="card-header" style="font-weight: bold">Dados pessoais </div>
+        <div class="card-body">
+            <div class="row mt-2">
+                @Html.Raw(HtmlHelper.MontaDiv("2", "Cpf", Model.Cpf))
+                @Html.Raw(HtmlHelper.MontaDiv("4", "Nome completo", Model.Nome))
+                @Html.Raw(HtmlHelper.MontaDiv("3", "Nome mãe", Model.NomeMae))
+                @Html.Raw(HtmlHelper.MontaDiv("3", "Nome pai", Model.NomePai))
+                @Html.Raw(HtmlHelper.MontaDiv("3", "Nacionalidade", Model.Nacionalidade))
+                @Html.Raw(HtmlHelper.MontaDiv("2", "Estado onde nasceu", Model.EstadoNasceu))
+                @Html.Raw(HtmlHelper.MontaDiv("2", "Cidade onde nasceu", Model.CidadeNasceu))
+                @Html.Raw(HtmlHelper.MontaDiv("2", "Celular (what'sapp)", Model.Celular))
+                @Html.Raw(HtmlHelper.MontaDiv("3", "Email", Model.Email))
+                @Html.Raw(HtmlHelper.MontaDiv("2", "Data Nascimento", Model.DataNascimento))
+                
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-12">
+    <div class="card">
+        <div class="card-header" style="font-weight: bold">Daocumento </div>
+        <div class="card-body">
+            <div class="row mt-2">
+                @Html.Raw(HtmlHelper.MontaDiv("2", "Nº do documento", Model.Rg))
+                @Html.Raw(HtmlHelper.MontaDiv("2", "Orgão emissor", Model.Emissor))
+                @if (Model.Emissor == "")
+                {
+                    @Html.Raw(HtmlHelper.MontaDiv("2", "Qual emissor", Model.EmissorOutro))
+                }
+                @Html.Raw(HtmlHelper.MontaDiv("2", "Estado emissor", Model.EmissorEstado))
+                @Html.Raw(HtmlHelper.MontaDiv("2", "Passaporte", Model.Passaporte))
+                @Html.Raw(HtmlHelper.MontaDiv("2", "Série do passaporte", Model.PassaporteSerie))
+            </div>
+        </div>
+    </div>
+</div>

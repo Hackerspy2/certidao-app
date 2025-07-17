@@ -1,0 +1,105 @@
+﻿@using Microsoft.Extensions.Configuration
+@inject IConfiguration Config
+@{
+    //var codigo = Context.Request.Host.Host.Contains("certidaonegativaonline") ? "KSTPW8MZ" : "PLQPQ8QJ";
+    var codigo = "T576SGRZ";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Titulo</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="@ViewBag.Descricao">
+    <meta name="author" content="@Config.GetSection("Url").Value">
+    <link rel="shortcut icon" type="image/png" href="/favicon.png">
+    <!--[if lt IE 9]>
+        <script src="/v1/js/respond.js"></script>
+    <![endif]-->
+    <link href="https://fonts.googleapis.com/css?family=Poppins%3A100%2C100italic%2C200%2C200italic%2C300%2C300italic%2C400%2C400italic%2C500%2C500italic%2C600%2C600italic%2C700%2C700italic%2C800%2C800italic%2C900%2C900italic%7CRoboto%3A100%2C100italic%2C200%2C200italic%2C300%2C300italic%2C400%2C400italic%2C500%2C500italic%2C600%2C600italic%2C700%2C700italic%2C800%2C800italic%2C900%2C900italic&amp;#038;display=swap&amp;#038;ver=6.3.2" rel="stylesheet">
+    
+    <link href="/v1/fonts/flaticon/flaticon.css" rel="stylesheet" type="text/css">
+    <link href="/v1/fonts/fontawesome/fontawesome-all.min.css" rel="stylesheet" type="text/css">
+    <link href="/v1/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/admin/libs/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet" />
+    <link href="/admin/css/spinners.css" rel="stylesheet" />
+    <link href="/admin/css/animate.css" rel="stylesheet" />
+    <link href="/v1/css/style.css" rel="stylesheet" />
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window, document, 'script', 'dataLayer', 'GTM-@codigo');</script>
+    <!-- End Google Tag Manager -->
+    @RenderSection("styles", false)
+</head>
+<body>
+<div class="preloader">
+    <div class="loader">
+        <div class="loader__figure"></div>
+        <p class="loader__label text-center">Carregando,<br />Aguarde por gentileza...</p>
+    </div>
+</div>
+
+@RenderBody()
+
+
+<div class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-12">
+                <a href="/">
+                    <img src="/images/logo.png" style="width: 320px;"/>
+                </a>
+            </div>
+                <div class="col-md-6 col-12">
+                <div class="seguro">
+                        <img src="/images/site-seguro.png" />
+                </div>
+            </div>
+        </div>
+        <div class="text-center links">
+            <a href="/Politica-de-Privacidade.pdf" target="_blank">Política de Privacidade</a>
+            <a href="/Termos-de-Uso.pdf" target="_blank">Termos de Uso</a>
+            <a href="@Url.Action("FaleConosco", "Ticket")">Contato</a>
+        </div>
+        <p class="text-center">
+                Copyright © 2023 Certidão Negativa Br CNPJ 54.673.333/0001-00 | Todos os direitos Reservados
+        </p>
+    </div>
+</div>
+<script src="/v1/vendor/jquery/jquery.min.js"></script>
+<script src="/v1/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="/admin/libs/sweetalert2/dist/sweetalert2.all.min.js"></script>
+<script src="/admin/libs/sweetalert2/sweet-alert.init.js"></script>
+<script src="/v1/js/mascara.js"></script>
+<script src="/v1/js/maskfunction.js"></script>
+<script src="/v1/js/wow.js"></script>
+    <script src="/v1/js/jquery.waypoints.js"></script>
+    <script src="/v1/js/jquery.counterup.js.js"></script>
+<script src="/v1/js/counter.js"></script>
+<script src="/admin/validation.js"></script>
+<script src="/admin/libs/moment/moment.js"></script>
+<script src="/admin/Geral.js"></script>
+@RenderSection("scripts", false)
+<script>
+    new WOW().init();
+
+    $('.numero').counterUp({
+        delay: 5,
+        time: 5000
+    });
+</script>
+<!-- Google Tag Manager (noscript) -->
+    <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-@codigo"
+                  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<!-- Start of certidaonegativa Zendesk Widget script -->
+<script id="ze-snippet" src="https://static.zdassets.com/ekr/snippet.js?key=93edede1-1ac9-462c-b3ff-d81cfc1ffd73"> </script>
+<!-- End of certidaonegativa Zendesk Widget script -->
+</body>
+
+</html>

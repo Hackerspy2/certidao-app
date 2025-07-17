@@ -1,0 +1,45 @@
+﻿@using HtmlHelper = Web.Models.HtmlHelper
+@model Domain.Ticket
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Modal.cshtml";
+}
+@section scripts
+    {
+    <script>
+        var carregarDados = function (chamada) {
+            switch (chamada) {
+                case "#mensagens":
+                    jDataTableNoSearch("#tableInteracoes", "/Interacao/ListByTicket/?idTicket=@Model.Id", "Interacao", 0, "", "hide-item", "", "PaiPai", "asc");
+                break;
+            }
+        }
+        $(document).ready(function () {
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                var target = $(e.target).attr("href");
+                carregarDados(target);
+            });
+            carregarDados("#mensagens");
+        });
+    </script>
+}
+<div class="animated fadeIn">
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#detalhes" role="tab"><span class="hidden-sm-up"><i class="ti-home"></i></span> <span class="hidden-xs-down">Detalhes</span></a></li>
+        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#interacoes" role="tab"><span class="hidden-sm-up"><i class="ti-home"></i></span> <span class="hidden-xs-down">Interações</span></a></li>
+    </ul>
+    <div class="tab-content tabcontent-border">
+        <div class="tab-pane active" id="detalhes">
+            <div class="p-20">
+                <div class="row">
+                    <partial name="_dados" model="Model" />
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="interacoes">
+            <div class="p-20">
+                @Html.Raw(HtmlHelper.MontaTabelaHtml("tableInteracoes", $"/Interacao/Add/?dados={Model.Id}&tipo=add&janela=bisneta", "Nova interação", "", "Data|Mensagem|Status", "PaiPai"))
+            </div>
+        </div>
+    </div>
+</div>

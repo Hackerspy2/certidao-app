@@ -1,0 +1,30 @@
+﻿@model Domain.Ticket
+@{
+    ViewBag.Titulo = $"Emitir certidão - {ViewBag.tipo}";
+    Layout = "~/Views/Shared/_Site.cshtml";
+    var cotroller = ViewContext.RouteData.Values["controller"]?.ToString();
+}
+
+<div id="topo">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <a href="/" style="margin: auto;">
+                    <img src="/images/logo.png" class="img-fluid" />
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container mb-5 mt-5">
+    <p>&nbsp;</p>
+    <h5 class="text-center">
+       Sua solicitação será cadastrada em até 24 horas, porém a maior parte das certidões é enviada nas primeiras 2 horas após o pagamento.<br/>
+        Aguarde a confirmação e o envio no e-mail informado no formulário. Fique atento a pasta SPAM.<br />
+        Para mais dúvidas acesse o chat ou e-mail de contato do nosso site.
+    </h5>
+   
+    <p>&nbsp;</p>
+
+    
+</div>

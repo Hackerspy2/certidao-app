@@ -1,0 +1,122 @@
+﻿@using HtmlHelper = WebApp.Models.HtmlHelper
+@using Azure.Core
+@using iDevCL
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString()!;
+    var titulo = "Tickets";
+    var isAdmin = Base.GetDadosUsuario<bool>(User, "IsSuporte") ? "" : "hide-item";
+        var request = Context.Request.Query["status"];
+}
+@section scripts
+{
+    <script type="text/javascript">
+        var jDataTableDados = function (idTabela, url, controller, rowConfirm, classDetails, classEdit, classDel, janela = "", order = "", searching = true) {
+            let admin = "@isAdmin";
+            myTable = $(idTabela).dataTable({
+                order: [[0, "desc"]],
+                processing: true,
+                sAjaxSource: url,
+                bServerSide: true,
+                searching: searching,
+                bDestroy: true,
+                bPaginate: true,
+                pageLength: 100,
+                dom: 'fBrtip',
+                language: { url: '/admin/libs/datatables/pt-br.json' },
+                buttons: [],
+                aoColumnDefs: [
+                    { bSortable: false, aTargets: [-1] },
+                    { bSearchable: false, aTargets: [-1] },
+                    {
+                        mRender: function (data, type, row) {
+                            var id = row[0];
+                            var html = "<div class='btn-group ml-auto m-t-10'>";
+                            html +=
+                                "<a href='javascript:void(0)' class='icon-options-vertical link' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'></a><div class='dropdown-menu dropdown-menu-right dropOptions' data-id='" + id + "'>";
+                            if (admin == "") {
+                                html += "<a href='/" + controller + "/Details/?dados=" + id + "' title='Visualizar' data-original-title='Visualizar - " + row[rowConfirm] + "' class='detalhes" + janela + " " + classDetails + " dropdown-item'> Visualizar</a>";
+                            }
+                            else  {
+                                if (row[6] != "Em aberto") {
+                                    html += "<a href='/" + controller + "/Details/?dados=" + id + "' title='Visualizar' data-original-title='Visualizar - " + row[rowConfirm] + "' class='detalhes" + janela + " " + classDetails + " dropdown-item'> Visualizar</a>";
+                                }
+                            }
+                            if (row[8] == null) {
+                                html += "<a href='javascript:;' data-id='"+id+"' class='pegar dropdown-item'> Atribuir</a>";
+                            }
+                            if (classEdit != "hide-item") {
+                                html += "<a href='/" + controller + "/Add/?id=" + id + "&acao=update' title='Alterar' data-original-title='Alterar - " + row[rowConfirm] + "' class='alterar" + janela + " " + classEdit + " dropdown-item'> Alterar</a>";
+                            }
+                            if (classDel != "hide-item") {
+                                html += "<a href='javascript:;' title='Deletar' class='deletar" + janela + " " + classDel + " dropdown-item' data-rel='" + id + "|" + row[rowConfirm] + "|" + controller + "|Del'> Deletar</a>";
+                            }
+                            html += "</div></div>";
+                            if (classDetails == "hide-item" && classEdit == "hide-item" && classDel == "hide-item") return "";
+                            return html;
+                        },
+                        aTargets: [-1]
+                    }
+                ], fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    $(nRow).attr("id", aData[aData.length - 1]);
+                    let status = aData[6];
+                    switch (status) {
+                        case "Em aberto": $(nRow).attr("class", "em-aberto"); break;
+                        case "Estornado": $(nRow).attr("class", "bg-danger"); break;
+                        case "Financeiro": $(nRow).attr("class", "bg-info"); break;
+                        case "Concluído": $(nRow).attr("class", "bg-success"); break;
+                        case "Em atendimento": $(nRow).attr("class", "bg-warning"); break;
+                        case "Aguardando resposta do cliente": $(nRow).attr("class", "em-resposta"); break;
+                    default:
+                    }
+                    return nRow;
+                },
+                initComplete: function () {
+                    $('.dataTables_filter input').val("@request");
+                    myTable.fnFilter("@request");
+                    $('.dataTables_filter input').unbind().bind('keyup', function (e) {
+                        if (this.value.length == 0) {
+                            myTable.fnFilter('');
+                        } else {
+                            if (this.value.length >= 3 && e.keyCode == 13) {
+                                myTable.fnFilter(this.value);
+                            }
+                        }
+                    });
+                }
+
+            });
+        };
+        $(document).ready(function () {
+            activeUrl("@ViewBag.Url");
+            jDataTableDados("#dynamicTableDesc", "/@controller/List", "@controller", 1, "", "@isAdmin", "@isAdmin");
+            $(document).delegate(".pegar", "click", function(e) {
+                e.preventDefault();
+                var link = $(this);
+                var dados = link.attr("data-id");
+                const modal = $("#modalPaiConfirm").one("click",
+                    "#btnPaiConfirme",
+                    function() {
+                        $(".preloader").show();
+                        $.ajax({
+                            url: `/Ticket/Atribuir/`,
+                            type: "get",
+                            data: { id: dados },
+                            contentType: "application/json",
+                            success: function(result) {
+                                $(".preloader").hide();
+                                NotificaClose(getTitle(result.cssClass), result.mensagem, result.cssClass);
+                                    myTable.api().ajax.reload();
+                            }
+                        });
+                    });
+                modal.find(".modal-footer").find("#btnPaiConfirme").html("Sim");
+                modal.find(".modal-footer").find("#btnPaiCancelar").html("Não");
+                modal.find(".modal-body").html(`Tem certeza que deseja atribuir esse ticket a você?`);
+                modal.on("show", function() {}).modal({ show: true, keyboard: false });
+                });
+        });
+    </script>
+}
+@Html.Raw(HtmlHelper.MontaHtml(titulo, controller, "Add", "cadastrar", "Código|Cpf|Nome/Telefone|Cadastro|Atribuição|Finalização|Status|Operador", isAdmin == "" ? "+ adicionar" : ""))
+

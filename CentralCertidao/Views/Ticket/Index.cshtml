@@ -1,0 +1,415 @@
+﻿@inject IConfiguration Config
+@{
+    ViewBag.Titulo = "Certidão Negativa";
+    ViewBag.Descricao = "Certidão Negativa";
+    Layout = "~/Views/Shared/_Site.cshtml";
+    var valor = Config.GetSection("ValorSite").Value;
+}
+@section scripts
+    {
+
+}
+<div id="topo">
+    <div class="container">
+        <div class="row">
+            <div class="col-8">
+                <a href="/">
+                    <img src="/images/logo.png" class="img-fluid" />
+                </a>
+            </div>
+            <div class="col-4 text-right">
+                <a href="@Url.Action("FaleConosco", "Ticket")" class="btn btn-azul contato">Contato</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container mb-5 mt-5">
+    <p>&nbsp;</p>
+    <h3 class="text-center mt-5 mb-5">Serviços para você!</h3>
+    <p>&nbsp;</p>
+    <div class="row">
+        <div class="col-md-3 col-12 wow slideInUp mb-5" data-wow-duration="0.5s">
+            <div class="sol">
+                <div class="bgBtn">
+                    <img src="/images/digital.png"/>
+                </div>
+                <h5>Certidão Negativa<br/>Criminal Federal </h5>
+                <h6>
+                    Certidão Eletrônica via e-mail.<br/>
+                    Taxa de Serviço: R$ @valor
+                </h6>
+                <a href="@Url.Action("Add", "Ticket", new { tipo = "Certidão Negativa Criminal Federal" })" class="btn btn-azul">Emitir Certidão</a>
+            </div>
+        </div>
+        <div class="col-md-3 col-12 wow slideInUp mb-5" data-wow-duration="1s">
+            <div class="sol">
+                <div class="bgBtn">
+                    <img src="/images/digital-out.png"/>
+                </div>
+                <h5>Certidão Negativa<br/>Criminal Estadual </h5>
+                <h6>
+                    Certidão Eletrônica via e-mail.<br/>
+                    Taxa de Serviço: R$ @valor
+                </h6>
+                <a href="@Url.Action("Add", "Ticket", new { tipo = "Certidão Negativa Criminal Estadual" })" class="btn btn-azul">Emitir Certidão</a>
+            </div>
+        </div>
+        <div class="col-md-3 col-12 wow slideInUp mb-5" data-wow-duration="3s">
+            <div class="sol">
+                <div class="bgBtn">
+                    <img src="/images/digital.png"/>
+                </div>
+                <h5>Antecedentes Criminais<br /> Polícia Federal</h5>
+                <h6>
+                    Certidão Eletrônica via e-mail.<br/>
+                    Taxa de Serviço: R$ @valor
+                </h6>
+                <a href="@Url.Action("Add", "Ticket", new { tipo = "Certidão de Antecedentes Criminais da Polícia Federal" })" class="btn btn-azul">Emitir Certidão</a>
+            </div>
+        </div>
+        <div class="col-md-3 col-12 wow slideInUp mb-5" data-wow-duration="1.5s">
+            <div class="sol">
+                <div class="bgBtn">
+                    <img src="/images/digital-out.png"/>
+                </div>
+                <h5>Certidão de Quitação<br/>Eleitoral </h5>
+                <h6>
+                    Certidão Eletrônica via e-mail.<br/>
+                    Taxa de Serviço: R$ @valor
+                </h6>
+                <a href="@Url.Action("Add", "Ticket", new { tipo = "Certidão de Quitação Eleitoral" })" class="btn btn-azul">Emitir Certidão</a>
+            </div>
+        </div>
+    </div>
+    <p>&nbsp;</p>
+    <div class="row">
+        <div class="col-md-3 col-12 wow slideInUp mb-5" data-wow-duration="2s">
+            <div class="sol">
+                <div class="bgBtn">
+                    <img src="/images/digital.png"/>
+                </div>
+                <h5>Certidão Negativa<br />Cível Federal </h5>
+                <h6>
+                    Certidão Eletrônica via e-mail.<br/>
+                    Taxa de Serviço: R$ @valor
+                </h6>
+                <a href="@Url.Action("Add", "Ticket", new { tipo = "Certidão Negativa Cível Federal" })" class="btn btn-azul">Emitir Certidão</a>
+            </div>
+        </div>
+        <div class="col-md-3 col-12 wow slideInUp mb-5" data-wow-duration="2.5s">
+            <div class="sol">
+                <div class="bgBtn">
+                    <img src="/images/digital-out.png"/>
+                </div>
+                <h5>Certidão Negativa<br />Cível Estadual </h5>
+                <h6>
+                    Certidão Eletrônica via e-mail.<br/>
+                    Taxa de Serviço: R$ @valor
+                </h6>
+                <a href="@Url.Action("Add", "Ticket", new { tipo = "Certidão Negativa Cível Estadual" })" class="btn btn-azul">Emitir Certidão</a>
+            </div>
+        </div>
+        <div class="col-md-3 col-12 wow slideInUp mb-5" data-wow-duration="1s">
+            <div class="sol">
+                <div class="bgBtn">
+                    <img src="/images/digital.png"/>
+                </div>
+                <h5>Certidão<br/>CPF Regular </h5>
+                <h6>
+                    Certidão Eletrônica via e-mail.<br/>
+                    Taxa de Serviço: R$ @valor
+                </h6>
+                <a href="@Url.Action("Add", "Ticket", new { tipo = "Certidão CPF Regular" })" class="btn btn-azul">Emitir Certidão</a>
+            </div>
+        </div>
+        <div class="col-md-3 col-12 wow slideInUp mb-5" data-wow-duration="3.5s">
+            <div class="sol">
+                <div class="bgBtn">
+                    <img src="/images/digital.png"/>
+                </div>
+                <h5>Certidão Negativa de<br /> Débitos - CND</h5>
+                <h6>
+                    Certidão Eletrônica via e-mail.<br/>
+                    Taxa de Serviço: R$ @valor
+                </h6>
+                <a href="@Url.Action("Add", "Ticket", new { tipo = "Certidão Negativa de Débitos - CND" })" class="btn btn-azul">Emitir Certidão</a>
+            </div>
+        </div>
+       @*  <div class="col-md-3 col-12">
+            <div class="sol">
+                <div class="bgBtn">
+                    <img src="/images/digital-out.png"/>
+                </div>
+                <h5 style="min-height: 107.5px">Certidão<br />de NIRF </h5>
+                <h6>
+                    Certidão Eletrônica via e-mail.<br/>
+                    Taxa de Serviço: R$ @valor
+                </h6>
+                <a href="@Url.Action("Add", "Ticket", new { tipo = "Certidão de NIRF" })" class="btn btn-azul">Emitir Certidão</a>
+                <a href="javascript:;" class="btn btn-azul">Emitir Certidão</a>
+            </div>
+        </div> *@
+    </div>
+    <p>&nbsp;</p>
+    @*<div class="row mb-5 mt-5">
+       
+        <div class="col-md-3 col-12">
+            <div class="sol">
+                <div class="bgBtn">
+                    <img src="/images/digital-out.png"/>
+                </div>
+                <h5>Certidão Judicial<br />Eleitoral </h5>
+                <h6>
+                    Certidão Eletrônica via e-mail.<br/>
+                    Taxa de Serviço: R$ @valor
+                </h6>
+                <a href="@Url.Action("Add", "Ticket", new { tipo = "Certidão Judicial Eleitoral" })" class="btn btn-azul">Emitir Certidão</a>
+                <a href="javascript:;" class="btn btn-azul">Emitir Certidão</a>
+            </div>
+        </div>
+        <div class="col-md-3 col-12">
+            <div class="sol">
+                <div class="bgBtn">
+                    <img src="/images/digital.png"/>
+                </div>
+                <h5>Certidão de Quitação <br />Eleitoral </h5>
+                <h6>
+                    Certidão Eletrônica via e-mail.<br/>
+                    Taxa de Serviço: R$ @valor
+                </h6>
+                <a href="@Url.Action("Add", "Ticket", new { tipo = "Certidão de Quitação Eleitoral" })" class="btn btn-azul">Emitir Certidão</a> 
+                <a href="javascript:;" class="btn btn-azul">Emitir Certidão</a>
+            </div>
+        </div>
+         <div class="col-md-3 col-12">
+            <div class="sol">
+                <div class="bgBtn">
+                    <img src="/images/digital-out.png"/>
+                </div>
+                <h5>Certidão Negativa de<br />Débitos de IPTU </h5>
+                <h6>
+                    Certidão Eletrônica via e-mail.<br/>
+                    Taxa de Serviço: R$ @valor
+                </h6>
+                <a href="@Url.Action("Add", "Ticket", new { tipo = "Certidão Negativa de Débitos de IPTU" })" class="btn btn-azul">Emitir Certidão</a>
+                <a href="javascript:;" class="btn btn-azul">Emitir Certidão</a>
+            </div>
+        </div> 
+    </div>
+    <p>&nbsp;</p>*@
+    </div>
+
+<div class="desempenho wow slideInUp" data-wow-duration="0.5s">
+    <h3 class="text-center">Desempenho dos Serviços</h3>
+
+    <div class="container estatisticas">
+        <div>
+            <div class="contador">
+                <span class="numero">97</span>
+                <span>%</span>
+            </div>
+            <div>Serviços Digitais</div>
+        </div>
+        <div>
+            <div class="contador">
+                <span class="numero">3,657</span>
+            </div>
+            <div>
+                Serviços no Portal
+            </div>
+        </div>
+        <div>
+            <div class="contador">
+                <span class="numero">92</span>
+                <span>%</span>
+            </div>
+            Avaliações Positivas
+        </div>
+    </div>
+</div>
+
+<div class="duvida wow slideInUp" data-wow-duration="0.5s">
+    <h2 class="text-center">Ficou com alguma dúvida?</h2>
+
+    <div class="container">
+        <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="item01">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse01" aria-expanded="true" aria-controls="collapseOne">
+                        Como faço para solicitar uma certidão através do site?
+                    </button>
+                </h2>
+                <div id="collapse01" class="accordion-collapse collapse show" aria-labelledby="item01" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        Para solicitar uma certidão através do nosso site, basta acessar a página de solicitação clicando em <strong> Emitir Certidão</strong>, preencher o formulário com as informações necessárias e efetuar o pagamento. Após a confirmação do pagamento, iniciaremos o requerimento da certidão e posteriormente faremos o envio.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="item02">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse02" aria-expanded="false" aria-controls="collapseTwo">
+                        Quanto tempo leva para receber a minha certidão?
+                    </button>
+                </h2>
+                <div id="collapse02" class="accordion-collapse collapse" aria-labelledby="item02" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        O prazo para recebimento da certidão varia de acordo com o tipo de documento solicitado e a localidade onde ele será emitido. O  prazo que pedimos para a maioria dos documentos é de 24 horas, mas em geral as certidões são entregues nas primeiras 2 horas após a confirmação do pagamento.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="item03">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse03" aria-expanded="false" aria-controls="collapseThree">
+                        Posso cancelar ou alterar minha solicitação após efetuar o pagamento?
+                    </button>
+                </h2>
+                <div id="collapse03" class="accordion-collapse collapse" aria-labelledby="item03" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        Sim, é possível cancelar ou alterar sua solicitação após efetuar o pagamento, desde que a solicitação ainda não tenha sido processada. Para fazer isso, clique no botão <strong>Contato</strong> no canto superior direito e envie a alteração que deseja fazer.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="item04">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse04" aria-expanded="false" aria-controls="collapseThree">
+                        O que acontece se a minha certidão não puder ser emitida?
+                    </button>
+                </h2>
+                <div id="collapse04" class="accordion-collapse collapse" aria-labelledby="item04" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        Caso a sua certidão não possa ser emitida por algum motivo, entraremos em contato com você para informar sobre a situação e providenciar o reembolso do valor pago.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="item05">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse05" aria-expanded="false" aria-controls="collapseThree">
+                        O site cobra alguma taxa adicional pelo serviço prestado?
+                    </button>
+                </h2>
+                <div id="collapse05" class="accordion-collapse collapse" aria-labelledby="item05" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        Sim, cobramos uma taxa pelo serviço prestado, que varia de acordo com o tipo de certidão solicitada e a localidade onde ela será emitida. O valor da taxa é informado durante o processo de solicitação da certidão.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="item06">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse06" aria-expanded="false" aria-controls="collapseThree">
+                        Essa atividade é legal?
+                    </button>
+                </h2>
+                <div id="collapse06" class="accordion-collapse collapse" aria-labelledby="item06" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        Sim! A Atividade de Despachante Documentalista é devidamente regulamentada pela Lei 14.282, DE 28 DE DEZEMBRO DE 2021.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="item07">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse07" aria-expanded="false" aria-controls="collapseThree">
+                        Posso emitir as certidões sem a ajuda do Certidão Negativa?
+                    </button>
+                </h2>
+                <div id="collapse07" class="accordion-collapse collapse" aria-labelledby="item07" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <p>Sim! O agendamento e cadastro podem ser feitos gratuitamente sem o acompanhamento profissional deste site, através dos órgãos públicos do Governo.</p>
+
+                        <p>O serviço prestado pelo nosso site é um serviço privado e opcional, realizado por profissionais despachantes documentalistas autorizados pela Lei Nº 14.282, DE 28 DE DEZEMBRO DE 2021 e não inclui eventuais taxas de expedição de documentos.</p>
+
+                        <p>Entretanto, caso queira maior comodidade, assessoria e suporte, você pode contar com nossos serviços.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="item08">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse08" aria-expanded="false" aria-controls="collapseThree">
+                        Receberei a Certidão Negativa?
+                    </button>
+                </h2>
+                <div id="collapse08" class="accordion-collapse collapse" aria-labelledby="item08" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        Se não ocorrer nenhuma divergência, sim, a Certidão Negativa será enviada. Mas caso o nome pesquisado tenha alguma divergência, a Certidão será Positiva, e enviaremos o retorno enviado pelo órgão emissor.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="item09">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse09" aria-expanded="false" aria-controls="collapseThree">
+                        As certidões são originais?
+                    </button>
+                </h2>
+                <div id="collapse09" class="accordion-collapse collapse" aria-labelledby="item09" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        Sim. Todas as Certidões são emitidas pelos órgãos oficiais com código de autenticação online.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="item10">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse10" aria-expanded="false" aria-controls="collapseThree">
+                        O que estou pagando?
+                    </button>
+                </h2>
+                <div id="collapse10" class="accordion-collapse collapse" aria-labelledby="item10" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        Você está contratando o serviço prestado pela certidaonegativa.site, emissão e envio das certidões direto para o seu e-mail ou whatsapp, de forma rápida, segura, com garantia e comodidade!
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="item11">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse11" aria-expanded="false" aria-controls="collapseThree">
+                        E se não sair a Certidão Negativa? (Caso seja positiva)
+                    </button>
+                </h2>
+                <div id="collapse11" class="accordion-collapse collapse" aria-labelledby="item11" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        Não vendemos certidões NEGATIVAS. (isso seria totalmente ilegal) O que fazemos é a prestação de serviço de emissão de certidão – Que pode ser negativa (se tudo estiver certo) ou pode ser positiva se houver algum problema – Lembramos que a não emissão da certidão negativa é de inteira responsabilidade do solicitante – ou seja não saiu a negativa pelo motivo de débitos e ou inconsistências de cadastro. o mesmo se resolve facilmente bastando Pagar o Débito e ou acertar a inconsistência. caso sua certidão seja positiva. Vamos lhe orientar o que fazer para tirar a negativa e estaremos a disposição para lhe ajudar neste sentido.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="item12">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse12" aria-expanded="false" aria-controls="collapseThree">
+                        A Certidão é gratuita? O que é cobrado?
+                    </button>
+                </h2>
+                <div id="collapse12" class="accordion-collapse collapse" aria-labelledby="item12" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        Cobramos pelos serviços prestados para emissão de sua certidão – a certidão é gratuita se for solicitada diretamente no órgão do governo – Nós prestamos um serviço privado e opcional, de forma ágil, rápida e simples. – e por isso cobramos os valores destes serviços. Vendemos o serviço de emissão da certidão – que pode ser negativa (se tudo estiver certo) ou pode ser positiva se tiver algum problema – caso for positiva orientamos o que fazer para tirar a negativa.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="item13">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse13" aria-expanded="false" aria-controls="collapseThree">
+                        O site é do Governo?
+                    </button>
+                </h2>
+                <div id="collapse13" class="accordion-collapse collapse" aria-labelledby="item13" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        Não. Prestamos um serviço privado e opcional. Não temos vínculo com o governo ou órgãos emissores.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="item14">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse14" aria-expanded="false" aria-controls="collapseThree">
+                        Certidões Digitais
+                    </button>
+                </h2>
+                <div id="collapse14" class="accordion-collapse collapse" aria-labelledby="item14" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        Certidões digitais significam que será recebido digitalmente no e-mail, não significa que receberá no mesmo dia ou na mesma hora. Atente-se aos prazos de cada certidão.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@* <div class="btn-whats">
+    <a rel="noreferrer" href="https://api.whatsapp.com/send?phone=+551142363377&amp;text=Olá!" target="_blank" class="pulse-button">
+        <img src="/images/whatsapp.png" alt="Certodão">
+    </a>
+</div> *@

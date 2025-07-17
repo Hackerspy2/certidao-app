@@ -1,0 +1,173 @@
+﻿section, p, div, button, h1, h2, h3, h4, h5, h6 { border: 0; margin: 0; padding: 0; }
+
+@font-face { font-family: 'Golos Text'; font-style: normal; font-weight: normal; src: url('/v2/fonts/GolosText-Regular.ttf') format('truetype'); }
+
+@font-face { font-family: 'Golos Text'; font-style: normal; font-weight: 500; src: url('/v2/fonts/GolosText-Medium.ttf') format('truetype'); }
+
+@font-face { font-family: 'Golos Text'; font-style: normal; font-weight: 600; src: url('/v2/fonts/GolosText-SemiBold.ttf') format('truetype'); }
+
+@font-face { font-family: 'Golos Text'; font-style: normal; font-weight: 700; src: url('/v2/fonts/GolosText-Bold.ttf') format('truetype'); }
+
+@font-face { font-family: 'Golos Text'; font-style: normal; font-weight: 800; src: url('/v2/fonts/GolosText-ExtraBold.ttf') format('truetype'); }
+
+@font-face { font-family: 'Golos Text'; font-style: normal; font-weight: 900; src: url('/v2/fonts/GolosText-Black.ttf') format('truetype'); }
+
+body { background-color: #F2F2F2; font-family: "Golos Text", Sans-serif; }
+
+.linha-topo { align-self: auto; background-color: #05A5FB; flex-basis: auto; flex-grow: 1; flex-shrink: 1; }
+
+.linha-topo h2 { font-family: "Golos Text", Sans-serif; font-size: 18px; font-weight: 500; padding: 10px 0; }
+
+#topo { background-color: #003554; display: flex; min-height: 100px; }
+
+#topo .logo { margin: 23px 0 0 0; width: 300px; }
+
+.navbar { background-color: transparent !important; margin: 0; padding: 0; }
+
+.navbar-nav .nav-link.active, .navbar-nav .nav-link.show { background-color: #05A5FB; color: #013553; }
+
+.nav-link { color: #fff0f5; font-family: "Golos Text", Sans-serif; font-weight: 500; padding: 40px }
+
+.nav-link:hover, .nav-link:focus { background-color: #05A5FB; color: #013553; }
+
+#seletor { color: #01335180; display: flex; justify-content: space-evenly; padding: 40px; }
+
+#seletor div { display: flex; }
+
+#seletor div.ativo { color: #003554; }
+
+#seletor div.ativo .titulo { color: #003554; }
+
+#seletor svg { margin-right: 15px; }
+
+#seletor .titulo { color: #01335180; font-family: "Golos Text", Sans-serif; font-size: 20px; font-weight: 600; }
+
+#certidoes { background-color: #FFF; border-radius: 12px 12px 12px 12px; box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.1); gap: 0px 0px; margin-bottom: 40px; margin-left: 0px; margin-right: 0px; margin-top: 0px; padding-bottom: 20px; padding-left: 20px; padding-right: 20px; padding-top: 40px; }
+
+#certidoes a { color: #0404E2; font-family: "Golos Text", Sans-serif; font-size: 18px; font-weight: 500; text-decoration: none; }
+
+#certidoes a span { color: #023E8A; float: right; }
+
+#certidoes h1 { font-family: "Golos Text", Sans-serif; font-size: 28px; font-weight: 500; margin-bottom: 20px; width: 100%; }
+
+#certidoes .container { align-self: auto; flex-basis: auto; flex-grow: 1; flex-shrink: 1; }
+
+#certidoes .item { display: flex; flex-direction: row; }
+
+#certidoes .item a { align-items: center; border-bottom-width: 2px; border-left-width: 2px; border-radius: 8px 8px 8px 8px; border-right-width: 2px; border-style: solid; border-style: solid; border-top-width: 2px; border-width: 2px 2px 2px 2px; display: block; flex-direction: row; flex-wrap: wrap; gap: 0px 0px; margin-bottom: 20px; padding-bottom: 20px; padding-left: 20px; padding-right: 20px; padding-top: 20px; width: 50%; }
+
+.como-emitir { margin: 40px auto; max-width: 538px; width: 100%; }
+
+.como-emitir h3 { -webkit-text-fill-color: initial; color: #002C83; font-family: "Golos Text", Sans-serif; font-size: 28px; font-weight: 500; margin-bottom: 25px; text-align: center; }
+
+.como-emitir p { text-align: center; }
+
+#bgPassos { padding-bottom: 30px; position: relative; z-index: 0; }
+
+#bgPassos::after { background-color: #003554; bottom: 0; content: ""; height: 150px; left: 0; position: absolute; width: 100%; }
+
+#passos { background-color: #FFF; border-radius: 12px 12px 12px 12px; box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.1); gap: 0px 0px; margin-bottom: 0; margin-left: 0px; margin-right: 0px; margin-top: 40px; padding: 60px 40px; position: relative; z-index: 1; }
+
+#passos .titulo { align-items: var(--icon-vertical-align, center); display: flex; font-size: inherit; }
+
+#passos .titulo svg { fill: #013553; margin-right: 10px; }
+
+#passos .titulo span { color: #023E8A; font-family: "Golos Text", Sans-serif; font-size: 28px; font-weight: 500; line-height: 1.2em; }
+
+#passos p { margin: 20px 0; }
+
+#footer { background-color: #003554; color: #fff0f5; padding: 40px 0; z-index: 0; }
+
+.estatisticas { display: flex; justify-content: space-evenly; }
+
+.estatisticas .contador { display: block; font-size: 48px; text-align: center; }
+
+#sobre { border-bottom-width: 2px; border-color: #FFFFFF; border-color: #FFFFFF; border-left-width: 2px; border-radius: 12px 12px 12px 12px; border-right-width: 2px; border-style: solid; border-style: solid; border-top-width: 2px; border-width: 2px 2px 2px 2px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; margin-top: 30px; padding-bottom: 40px; padding-left: 40px; padding-right: 40px; padding-top: 40px; }
+
+#sobre .texto { display: flex; justify-content: space-evenly; }
+
+#sobre .texto div { width: 48%; }
+
+.accordion-item { background-color: #003554; border: none; color: #fff; }
+
+.accordion-header .icons { font-size: 14px; }
+
+.accordion-body, .accordion-header, .accordion-button:not(.collapsed) { background-color: #003554; box-shadow: none; color: #fff; }
+
+.accordion-button { background-color: #003554; color: #F8F1DB7D; font-size: 20px; }
+
+.accordion-button::after { display: none; }
+
+.logoRodape { align-items: center; background-color: #FFF; border-radius: 20px 20px 20px 20px; display: flex; flex-direction: row; justify-content: space-between; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; margin-top: 20px; padding-bottom: 40px; padding-left: 40px; padding-right: 40px; padding-top: 40px; }
+
+.solicitacao { padding: 40px !important; }
+
+.form-input { margin-bottom: 15px; }
+
+.foi, .foi .titulo { color: #28a745 !important; }
+
+.hidden { display: none; }
+
+.total { display: flex; font-size: 16pt; font-weight: 500; justify-content: space-between; padding: 20px 10px; }
+
+.total span { color: #05a6fc; }
+
+.dadosPix { background-color: #fff !important; border-radius: 10px; display: flex; margin: 30px 0; padding: 40px; }
+
+.dadosPix .qrCode { margin-right: 20px; }
+
+.dadosPix #copiaCola { background-color: #F2F2F2 !important; border-radius: 10px; font-size: 15pt; margin: 0 20px; margin: 10px; padding: 20px !important; }
+
+.dadosPix #resultValor { color: #06BD22; font-size: 16pt; font-weight: 500; margin-left: 11px; }
+
+.painel h1 { font-size: 20pt !important; }
+
+.painel h1 a { font-size: 12pt !important; text-decoration: none; }
+
+.botoes { display: flex; }
+
+.botoes a { background-color: #003554; border-radius: 8px; color: #FFF !important; margin-right: 10px; padding: 10px 30px; }
+
+.botoes span { background-color: #003554; color: #FFF !important; margin-left: 10px; }
+
+.area { background-color: #FFF; border-radius: 12px 12px 12px 12px; box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.1); gap: 0px 0px; margin-bottom: 40px; margin-left: 0px; margin-right: 0px; margin-top: 0px; padding-bottom: 20px; padding-left: 20px; padding-right: 20px; padding-top: 40px; }
+
+.area h1 { font-size: 18pt; }
+
+.acompanhar { float: right; margin-top: 34px; }
+
+@media (max-width: 767px) {
+    #seletor { padding: 40px 10px;}
+    #seletor .titulo { font-size: 16px; display: none; }
+    #seletor .ativo .titulo { font-size: 14px; display: block; }
+    #seletor svg { margin-right: 5px; width: 20px }
+    .nav-link { padding: 0 20px }
+    #topo .logo { margin-top: 29px; width: 252px; }
+    .linha-topo h2 { font-size: 13px; }
+    #topo .logo { width: 180px; }
+    #certidoes h1 { font-size: 18px; }
+    .acompanhar { display: none }
+    .navbar { float: right; top: 30px; }
+    .navbar-toggler { border: none; }
+    .navbar-toggler-icon { background-color: #fff0f5; }
+    #certidoes h3 { text-align: center; }
+    #certidoes .item { display: block; margin-bottom: 25px; }
+    #certidoes .item a { margin-bottom: 0; width: 100%; }
+    #certidoes .item a div { font-size: 16px; }
+    .como-emitir h3 { font-size: 20px;}
+    #passos .titulo span { font-size: 20px; }
+    .estatisticas { display: block; }
+    .estatisticas div { width: 100%; text-align: center; }
+    #sobre .texto { display: block;}
+    #sobre .texto div { width: 100%; }
+    .logoRodape { display: block; }
+    .logoRodape div { text-align: center; margin: 30px; }
+    .root { font-size: 14px; text-align: center;}
+    .form-input div { width: 100%; display: block; }
+    #pagador .btn { font-size: 16px;}
+    .sucesso { padding: 20px !important;}
+    .sucesso p { font-size: 14pt !important;}
+    .dadosPix { display: block;}
+    .dadosPix #copiaCola { word-wrap: break-word; }
+    .dadosPix #copiaCola:after, .dadosPix #copiaCola:before { box-sizing: border-box; }
+}

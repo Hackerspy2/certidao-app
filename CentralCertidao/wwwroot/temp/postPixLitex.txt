@@ -1,0 +1,4 @@
+{"webhookType":"liquidateInvoice",
+"data":{"invoiceId":"63860a18063efa000aafbdc7",
+"payedAt":"2023-06-20T03:00:00-03:00","payedValue": 100, 
+"paymentMethod": "boleto","referenceId":"1240"},"signature":"xD01xMiqzKlZh1/W+iPZgar3e77jiAU6WUcrR1yLPX8="}

@@ -1,0 +1,49 @@
+﻿@model Domain.Pessoa
+@{
+    Layout = "~/Views/Shared/_Modal.cshtml";
+    var cotroller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+}
+@section scripts
+    {
+    <script>
+        $(function () {
+            carregarEstados('#Estado', '#Cidade', '@Html.Raw(Model.Estado)', '@Html.Raw(Model.Cidade)');
+            $("#Cep").keyup(function () {
+                carregarEndereco($(this), "#Logradouro", "#Bairro", "#Estado", "#Cidade");
+            });
+            $("#Email").blur(function (e) {
+                e.preventDefault();
+                if ($(this).val() != "") {
+                    $(".preloader").show();
+                    $.ajax({
+                        type: "GET",
+                        url: "/Pessoa/ValidaEmail",
+                        data: { email: $(this).val(), id: $("#Id").val() },
+                        dataType: "json",
+                        success: function (ret) {
+                            $(".preloader").hide();
+                            if (ret.cssClass === "warning") {
+                                window.parent.Notifica(getTitle(ret.cssClass), ret.mensagem, ret.cssClass, "");
+                                $("#salvar").prop("disabled", true);
+                            } else {
+                                $("#salvar").prop("disabled", false);
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}
+<form asp-action="Salvar" asp-controller="Pessoa" method="post" enctype="multipart/form-data" role="form" class="floating-labels formAsync" id="form_geral" novalidate="">
+    <div class="row mt-3">
+        <partial name="_add" model="Model" />
+        <div class="col-md-12">
+            <button id="salvar" type="submit" class="btn btn-info waves-effect waves-light m-t-10">Salvar</button>
+            <input id="continua" name="continua" type="hidden" value="" />
+        </div>
+        <p>&nbsp;</p>
+    </div>
+    @Html.Hidden("rediret", "#detalhes")
+</form>

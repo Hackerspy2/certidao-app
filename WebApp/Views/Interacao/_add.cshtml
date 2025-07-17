@@ -1,0 +1,23 @@
+﻿@using Repository.Util
+@using Domain
+@model Interacao
+@using HtmlHelper = WebApp.Models.HtmlHelper
+@{
+    var tipo = ViewData["tipo"]!.ToString();
+}
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Select, "Status", Model.Status, "Status", "*", "3", "ListStatusInteracao"))
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Select, "Enviar", Model.Enviar, "Enviar pro email do usuário", "*", "2", "ListSimNao"))
+@Html.Raw(HtmlHelper.MontaInput(InputTypes.Textarea, "Mensagem", Model.Mensagem, "Mensagem", "*", "12"))
+<div class="col-lg-6 col-sm-6 col-md-6 col-12">
+    <img id="preview-image" />
+    <div class="form-group">
+        <label for="Upload" class="btn btn-warning btn-xs"><i class="fa fa-plus-circle"></i> Selecionar um anexo</label>
+        <input type="file" name="files" id="Upload" data-val="true" data-val-required="Selecione um anexo" style="display: none" />
+    </div>
+</div>
+<div class="clearfix"></div>
+@Html.HiddenFor(a => a.Id)
+@Html.HiddenFor(a => a.DataCadastro)
+@Html.HiddenFor(a => a.IdTicket)
+@Html.Hidden("janela", ViewData["janela"])
+@Html.Hidden("tipo",  ViewData["tipo"])

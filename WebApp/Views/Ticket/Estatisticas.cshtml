@@ -1,0 +1,170 @@
+﻿@model Tuple<IList<Domain.Ticket>, IList<Domain.Ticket>, IList<Domain.Pessoa>>
+@{
+   Layout = "~/Views/Shared/_Layout.cshtml";
+   var controller = ViewContext.RouteData.Values["controller"]?.ToString()!;
+   var titulo = "Estatisticas";
+   var isAdmin = Base.GetDadosUsuario<bool>(User, "IsSuporte") ? "" : "hide-item";
+   var request = Context.Request.Query["status"];
+   decimal? soma = 0m;
+}
+@section scripts {
+   <script>
+      $(document).ready(function () {
+          $("#data").change(function () {
+              var data = $(this).val();
+              window.location.href = "?data=" + data;
+          })
+      });
+   </script>
+}
+<div class="row page-titles">
+   <div class="col-md-5">
+      &nbsp;
+   </div>
+   <div class="col-md-7 align-self-center">
+      <ol class="breadcrumb">
+         <li class="breadcrumb-item">
+            <a href="/">Dashboard</a>
+         </li>
+         <li class="breadcrumb-item active">Estatísticas</li>
+      </ol>
+   </div>
+   <div></div>
+</div>
+<div class="animated fadeInUp">
+   <div class="row">
+      <div class="col-12">
+         <div class="card">
+            <div class="card-body">
+               <table class="display table table-hover table-striped table-bordered dataTable no-footer">
+                  <thead>
+                     <tr>
+                        <th>Operador</th>
+                        <th class="text-center">Atribuído</th>
+                        <th class="text-center">Em atendimento</th>
+                        <th class="text-center">Aguardando resposta do cliente</th>
+                        <th class="text-center">Financeiro</th>
+                        <th class="text-center">Estornado</th>
+                        <th class="text-center">Concluído</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     @if (Model.Item1.Any())
+                     {
+                        var pessoas = Model.Item1.Where(a => a.IdPessoa.HasValue).GroupBy(a => a.IdPessoa);
+                        foreach (var pessoa in pessoas)
+                        {
+                           var nome = Model.Item3.FirstOrDefault(a => a.Id == pessoa.Key).Nome;
+                           <tr>
+                              <td>@nome</td>
+                              <td class="text-center">@pessoa.Count(a => a.Status == "Atribuído")</td>
+                              <td class="text-center">@pessoa.Count(a => a.Status == "Em atendimento")</td>
+                              <td class="text-center">@pessoa.Count(a => a.Status == "Aguardando resposta do cliente")</td>
+                              <td class="text-center">@pessoa.Count(a => a.Status == "Financeiro")</td>
+                              <td class="text-center">@pessoa.Count(a => a.Status == "Estornado")</td>
+                              <td class="text-center">@pessoa.Count(a => a.Status == "Concluído")</td>
+                           </tr>
+                        }
+
+                        <tr>
+                           <td colspan="7">Total em aberto: @Model.Item1.Count(a => a.Status == "Em aberto") &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Total aguardando pagamento: @ViewBag.NaoPagos</td>
+                        </tr>
+                     }
+                     else
+                     {
+                        <tr>
+                           <td class="text-center" colspan="7">Nenhum registro encontrado!</td>
+                        </tr>
+                     }
+                  </tbody>
+               </table>
+               <h3 class="text-center">Estatísticas de <input id="data" type="text" value="@ViewBag.data" class="mask_data" style="width: 165px; text-align: center; border: none;" /></h3>
+               <table class="display table table-hover table-striped table-bordered dataTable no-footer">
+                  <thead>
+                     <tr>
+                        <th>Dominio</th>
+                        <th class="text-center">Total</th>
+                        <th class="text-center">Não pago</th>
+                        <th class="text-center">Pago</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     @if (Model.Item2.Any())
+                     {
+                        var dominios = Model.Item2.GroupBy(a => a.Dominio.Replace("www.", ""));
+                        foreach (var d in dominios)
+                        {
+                           <tr>
+                              <td>@d.Key</td>
+                              <td class="text-center">@d.Count()</td>
+                              <td class="text-center">@d.Count(a => a.Dominio.Replace("www.", "") == d.Key && a.StatusPagamento != "Pago")</td>
+                              <td class="text-center">@d.Count(a => a.Dominio.Replace("www.", "") == d.Key && a.StatusPagamento == "Pago")</td>
+                           </tr>
+                        }
+                        <tr>
+                           <td>Total</td>
+                           <td class="text-center">@Model.Item2.Count</td>
+                           <td class="text-center">@Model.Item2.Count(a => a.StatusPagamento != "Pago")</td>
+                           <td class="text-center">@Model.Item2.Count(a => a.StatusPagamento == "Pago")</td>
+                        </tr>
+                     }
+                     else
+                     {
+                        <tr>
+                           <td class="text-center" colspan="7">Nenhum registro encontrado!</td>
+                        </tr>
+                     }
+                  </tbody>
+               </table>
+               @{
+                  var dominioss = Model.Item2.GroupBy(a => a.Dominio.Replace("www.", "")).Select(a => new { Dominio = a.Key });
+               }
+               <table class="display table table-hover table-striped table-bordered dataTable no-footer">
+                  <thead>
+                     <tr>
+                        <th>Tipo</th>
+                        <th class="text-center">Total</th>
+                        <th class="text-center">Não pago</th>
+                        <th class="text-center">Pago</th>
+                        @foreach (var d in dominioss.OrderBy(a => a.Dominio))
+                        {
+                           <th class="text-center">@d.Dominio</th>
+                        }
+                     </tr>
+                  </thead>
+                  <tbody>
+                     @if (Model.Item2.Any())
+                     {
+
+                        var tipos = Model.Item2.GroupBy(a => a.Tipo).Select(a => new { Tipo = a.Key, Pagos = a.Count(ca => ca.StatusPagamento == "Pago"), NaoPagos = a.Count(ca => ca.StatusPagamento != "Pago"), Total = a.Count() });
+                        foreach (var d in tipos.OrderByDescending(a => a.Total))
+                        {
+                           <tr>
+                              <td>@d.Tipo</td>
+                              <td class="text-center">@d.Total</td>
+                              <td class="text-center">@d.NaoPagos</td>
+                              <td class="text-center">@d.Pagos</td>
+                              @foreach (var dd in dominioss.OrderBy(a => a.Dominio))
+                              {
+                                 <th class="text-center">
+                                    Total: @Model.Item2.Count(c => c.Dominio.Replace("www.", "") == dd.Dominio && c.Tipo == d.Tipo)
+                                    Pago: @Model.Item2.Count(c => c.Dominio.Replace("www.", "") == dd.Dominio && c.Tipo == d.Tipo && c.StatusPagamento == "Pago")
+                                    NãoPago: @Model.Item2.Count(c => c.Dominio.Replace("www.", "") == dd.Dominio && c.Tipo == d.Tipo && c.StatusPagamento != "Pago")
+                                 </th>
+                              }
+                           </tr>
+                        }
+                     }
+                     else
+                     {
+                        <tr>
+                           <td class="text-center" colspan="7">Nenhum registro encontrado!</td>
+                        </tr>
+                     }
+                  </tbody>
+               </table>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>

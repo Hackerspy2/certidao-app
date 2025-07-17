@@ -1,0 +1,169 @@
+﻿@inject IConfiguration Config
+@{
+    ViewBag.Titulo = $"Emitir certidão - {ViewBag.tipo}";
+    Layout = "~/Views/Shared/_Site.cshtml";
+}
+@section scripts
+{
+    <script src="~/v2/js/validacao.js"></script>
+    <script>
+        $(document).ready(function() {
+            $(".preloader").hide();
+            $("#esqueceuSenha").click(function() {
+                $("#formRecuperar").show();
+                $("#formLogin").hide();
+            });
+            $("#voltarLogin").click(function() {
+                $("#formRecuperar").hide();
+                $("#formLogin").show();
+            });
+            $("#salvar").click(function() {
+                if ($("#email").val() == "") {
+                    Notifica("Atenção", "Informe seu e-mail", "warning");
+                    return;
+                }
+
+                if ($("#senha").val() == "") {
+                    Notifica("Atenção", "Informe sua senha", "warning");
+                    return;
+                }
+                $(".preloader").show();
+                $.ajax({
+                    type: "POST",
+                    url: "/Ticket/ValidarDados",
+                    data: {
+                        senha: $("#senha").val(),
+                        email: $("#email").val()
+                    },
+                    success: function(ret) {
+                        $(".preloader").hide();
+                        if (ret.cssClass == "success") {
+                            window.location.href = "/acompanhar";
+                        } else {
+                            Notifica("Atenção", ret.mensagem, "warning");
+                        }
+                    }
+                });
+            });
+            $("#recuperar").click(function() {
+                if ($("#emailReq").val() == "") {
+                    Notifica("Atenção", "Informe seu e-mail", "warning");
+                    return;
+                }
+                $(".preloader").show();
+                $.ajax({
+                    type: "POST",
+                    url: "/Ticket/RecuperarSenha",
+                    data: {
+                        email: $("#emailReq").val()
+                    },
+                    success: function(ret) {
+                        $(".preloader").hide();
+                        Notifica("Atenção", ret.mensagem, "warning");
+                        if (ret.cssClass == "success") {
+                            $("#formRecuperar").hide();
+                            $("#formLogin").show();
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}
+<div class="linha-topo">
+    <h2 class="text-center">Encontre a certidão que precisa, de um jeito fácil e sem filas.</h2>
+</div>
+<div id="topo">
+    <div class="container">
+        <div class="row">
+            <div class="col-6">
+                <a href="/">
+                    <img src="~/v2/images/logo-topo.svg" class="logo" />
+                </a>
+            </div>
+            <div class="col-6 text-right">
+                <a asp-action="Acompanhar" class="btn btn-primary" style="float: right; margin-top: 34px;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 4a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7ZM6.5 7.5a5.5 5.5 0 1 1 11 0 5.5 5.5 0 0 1-11 0Zm2.826 7h5.348c1.227 0 2.065 0 2.777.215a5 5 0 0 1 3.334 3.334c.216.712.215 1.55.215 2.777V21a1 1 0 0 1-2 0c0-1.468-.01-1.98-.13-2.37a3 3 0 0 0-2-2c-.39-.12-.902-.13-2.37-.13h-5c-1.468 0-1.98.01-2.37.13a3 3 0 0 0-2 2c-.12.39-.13.902-.13 2.37a1 1 0 1 1-2 0v-.174c0-1.227 0-2.065.215-2.777a5 5 0 0 1 3.334-3.334c.712-.216 1.55-.216 2.777-.215Z" clip-rule="evenodd"></path></svg> Acompanhar Emissão</a>
+                <nav class="navbar navbar-expand-lg bg-body-tertiary">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item"><a class="nav-link" aria-current="page" href="/"> Emitir Certidão </a></li>
+                            <li class="nav-item"><a class="nav-link ancora" href="#sobre"> Sobre Nós </a></li>
+                            <li class="nav-item"><a class="nav-link" asp-action="FaleConosco"> Contato </a></li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<div class="container">
+    <div class="area" id="conta">
+        <p>&nbsp;</p>
+        <div class="row" id="formLogin">
+            <div class="col-lg-4 col-12"></div>
+            <div class="col-lg-4 col-12">
+                <label>E-mail *</label>
+                <input type="email" class="form-control" id="email" value="" />
+            </div>
+            <div class="col-lg-4 col-12"></div>
+            <div class="col-lg-4 col-12"></div>
+            <div class="col-lg-4 col-12 mt-3">
+                <label>Senha *</label>
+                <input type="password" class="form-control" id="senha" value="" />
+            </div>
+            <div class="col-lg-4 col-12"></div>
+            <div class="col-lg-4 col-12"></div>
+            <div class="col-lg-4 col-12 mt-3">
+                <a href="javascript:;" id="esqueceuSenha" style="float: right;">Esqueceu a senha?</a>
+                <button id="salvar" class="btn btn-primary">Validar</button>
+            </div>
+            <div class="col-lg-4 col-12"></div>
+        </div>
+        <div class="row" id="formRecuperar" style="display: none">
+            <div class="col-lg-4 col-12"></div>
+            <div class="col-lg-4 col-12">
+                <label>E-mail *</label>
+                <input type="email" class="form-control" id="emailReq" value="" />
+            </div>
+            <div class="col-lg-4 col-12"></div>
+            <div class="col-lg-4 col-12"></div>
+            <div class="col-lg-4 col-12 mt-3">
+                <a href="javascript:;" id="voltarLogin" style="float: right;">Voltar para login</a>
+                <button id="recuperar" class="btn btn-primary">Recuperar</button>
+            </div>
+            <div class="col-lg-4 col-12"></div>
+        </div>
+        <p>&nbsp;</p>
+    </div>
+</div>
+<div id="footer">
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <div class="container">
+        <div class="logoRodape">
+            <div><img src="/v2/images/logo-rodape.svg" style="width: 200px;" /></div>
+            <div class="text-center">
+                <a href="/Politica-de-Privacidade.pdf" target="_blank">Política de Privacidade</a><br />
+                <a href="/Termos-de-Uso.pdf" target="_blank">Termos de Uso</a>
+            </div>
+            <div class="text-right">
+                <img src="~/v2/images/compra-segura-optimized.png" /> &nbsp; <img src="~/v2/images/satisfacao-optimized.png" /> &nbsp; <img src="~/v2/images/site-seguro-optimized.png" />
+            </div>
+        </div>
+    </div>
+    <p>&nbsp;</p>
+    <div class="root">
+        <div class="container">
+            <div class="row">
+                <div class=" col-12">
+                    Copyright © @DateTime.Today.Year Certidão Negativa Br CNPJ 54.673.333/0001-00 | Todos os direitos Reservados
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
